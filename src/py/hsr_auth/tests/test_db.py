@@ -81,7 +81,6 @@ class TestDB:
       assert str(instance) == "Could not write User!"
     else:
       assert False
-    
 
   def test_ChangeUnknownUser(self, db):
     user = db.createUser('armence', 'Hello!')
@@ -106,14 +105,14 @@ class TestDB:
     assert user2 == None
 
   def test_FindUnknownSession(self, db):
-    sessions = db.getSessionsByID(46431)
+    session = db.getSessionById(46431)
 
-    assert len(sessions) == 0
+    assert session == None
 
   def test_FindCreateSession(self, db):
     session = Session(7657856, 46431)
     db.writeSession(session)
-    session2 = db.getSessionsByID(46431)[0]
+    session2 = db.getSessionById(46431)
 
     assert session2 == session
 
@@ -127,9 +126,9 @@ class TestDB:
     session = Session(7657856, 46431)
     db.writeSession(session)
     db.deleteSession(session)
-    sessions = db.getSessionsByID(46431)
+    session = db.getSessionById(46431)
 
-    assert len(sessions) == 0
+    assert session == None
 
   def test_FindUserSessions(self, db):
     user = User(1, 'armence', 'Hello!')

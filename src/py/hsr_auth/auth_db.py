@@ -109,9 +109,15 @@ class HSRAuthDB:
 
   def writeSession(self, session): abstract()
 
-  def getSessionsByID(self, session_id): abstract()
+  def getSessionById(self, session_id): abstract()
 
   def getSessionsByUser(self, user): abstract()
+
+  def newSession(self, user_id):
+    session = Session(user_id)
+    while not self.writeSession(session):
+      session = Session(user_id)
+    return session
 
 
 class HSRAuthDBMySQLImpl(HSRAuthDB):
@@ -182,18 +188,17 @@ class HSRAuthDBMySQLImpl(HSRAuthDB):
     cursor = self.db.cursor()
     cursor.execute(sql, params)
 
-  def getSessionsByID(self, session_id):
+  def getSessionById(self, session_id):
     params = [session_id]
     sql = """SELECT UserID, SessionID, CreationTime, LastTouched FROM
     Sessions WHERE SessionID=%s;"""
     cursor = self.db.cursor()
     cursor.execute(sql, params)
     results = cursor.fetchall()
-    sessions = []
-    for session in results:
-      sessions.append(Session(session[0], session[1], session[2],
-        session[3]))
-    return sessions
+    try:
+      return Session(results[0][0], results[0][1], results[0][2], results[0][3])
+    except IndexError, (instance):
+      return None
 
   def writeSession(self, session):
     params = [session.user_id, session.session_id,
@@ -201,7 +206,11 @@ class HSRAuthDBMySQLImpl(HSRAuthDB):
     sql = """INSERT INTO Sessions(UserID, SessionID, CreationTime,
     LastTouched) VALUES(%s, %s, %s, %s);"""
     cursor = self.db.cursor()
-    cursor.execute(sql, params)
+    try:
+      cursor.execute(sql, params)
+    except IntegrityError:
+      return False
+    return True
 
   def deleteSession(self, session):
     params = [session.session_id, session.user_id]

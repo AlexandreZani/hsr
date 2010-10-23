@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Copyright 2010 Alexandre Zani (Alexandre.Zani@gmail.com)
 
@@ -13,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 <MySQLDB name="HSRAuthDB">
   <table name="Users">
     <field name="UserID" signed="false" type="INT" unique="true" indexed="false" autoincrement="true" />
@@ -24,7 +24,7 @@
 
   <table name="Sessions">
     <field name="UserID" signed="false" type="INT" indexed="true" />
-    <field name="SessionID" type="VARCHAR(255)" indexed="true" />
+    <field name="SessionID" type="VARCHAR(255)" unique="true" indexed="true" />
     <field name="CreationTime" signed="false" type="INT" />
     <field name="LastTouched" signed="false" type="INT" />
   </table>

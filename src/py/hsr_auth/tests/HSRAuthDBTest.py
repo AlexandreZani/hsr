@@ -69,13 +69,18 @@ class HSRAuthDBTestImpl(HSRAuthDB):
     self.sessions.append(session)
     return True
 
-  def getSessionsByID(self, session_id):
+  def newSession(self, user_id):
+    session = Session(user_id)
+    while not self.writeSession(session):
+      session = Session(user_id)
+    return session
+
+  def getSessionById(self, session_id):
     session_id = str(session_id)
-    sessions = []
     for i in range(len(self.sessions)):
       if(session_id == self.sessions[i].session_id):
-        sessions.append(self.sessions[i])
-    return sessions
+        return self.sessions[i]
+    return None
 
   def getSessionsByUser(self, user):
     sessions = []
