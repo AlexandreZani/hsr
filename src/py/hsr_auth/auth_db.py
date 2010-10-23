@@ -84,7 +84,7 @@ class Session:
       self.created = time.time()
       self.last_used = time.time()
 
-  def Touch(self):
+  def touch(self):
     self.last_used = time.time()
 
   def __eq__(self, right):
