@@ -86,6 +86,19 @@ class TestDB:
     assert mo2 in mos
     assert mo3 not in mos
 
+  def test_deleteMuseumObject(self, db):
+    mo1 = db.newMuseumObject("hello", "hi", "berkeley")
+    mo2 = db.newMuseumObject("helslo", "hsfi", "berdkeley")
+    mo3 = db.newMuseumObject("hels2lo", "h2sfi", "2berdkeley")
+
+    assert db.deleteMuseumObject(mo3.object_id)
+
+    mos = db.getAllMuseumObjects()
+
+    assert mo1 in mos
+    assert mo2 in mos
+    assert mo3 not in mos
+
   def test_newIndividual(self, db):
     suffix = "a"
     suffix_design = "b"
@@ -149,6 +162,16 @@ class TestDB:
     bi1 = db.newIndividual("a", "a1", 10, 30, "NA")
     bi2 = db.newIndividual("b", "b1", 130, 310, "NA")
     bi3 = BioIndividual(121, "fa", "d1", 140, 320, "NA")
+    bis = db.getAllIndividuals()
+    assert bi1 in bis
+    assert bi2 in bis
+    assert bi3 not in bis
+
+  def test_deleteIndividual(self, db):
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA")
+    bi2 = db.newIndividual("b", "b1", 130, 310, "NA")
+    bi3 = db.newIndividual("sb", "fb1", 1330, 1310, "NA")
+    db.deleteIndividual(bi3.indiv_id)
     bis = db.getAllIndividuals()
     assert bi1 in bis
     assert bi2 in bis

@@ -169,3 +169,5 @@ class HSRDB:
   def getIndividualById(self, indiv_id): abstract()
   def getAllIndividuals(self): abstract()
   def newIndividual(self, suffix, suffix_design, min_age, max_age, sex): abstract()
+  def deleteIndividual(self, indiv_id): abstract()
+  def deleteMuseumObject(self, object_id): abstract()

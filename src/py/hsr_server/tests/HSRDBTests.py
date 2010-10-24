@@ -49,6 +49,13 @@ class HSRDBTestImpl(HSRDB):
         return True
     return False 
 
+  def deleteMuseumObject(self, object_id):
+    for mo in self.museum_objects:
+      if mo.object_id == object_id:
+        self.museum_objects.remove(mo)
+        return True
+    return False
+
   def newIndividual(self, suffix, suffix_design, min_age, max_age, sex):
     bi = BioIndividual(
         self.indivs_id,
@@ -80,3 +87,10 @@ class HSRDBTestImpl(HSRDB):
     for bi in self.indivs:
       bis.append(bi)
     return bis
+
+  def deleteIndividual(self, indiv_id):
+    for bi in self.indivs:
+      if bi.indiv_id == indiv_id:
+        self.indivs.remove(bi)
+        return True
+    return False
