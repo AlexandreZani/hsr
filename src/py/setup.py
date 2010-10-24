@@ -21,4 +21,4 @@ setup(name='hsr',
     author_email='Alexandre.Zani@gmail.com',
     description=(''),
     license='Apache License Version 2.0',
-    packages=['hsr_auth'])
+    packages=['hsr_auth', 'hsr_server'])
