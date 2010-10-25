@@ -56,14 +56,16 @@ class HSRDBTestImpl(HSRDB):
         return True
     return False
 
-  def newIndividual(self, suffix, suffix_design, min_age, max_age, sex):
+  def newIndividual(self, suffix, suffix_design, min_age, max_age,
+      sex, museum_object):
     bi = BioIndividual(
         self.indivs_id,
         suffix,
         suffix_design,
         min_age,
         max_age,
-        sex)
+        sex,
+        museum_object)
     self.indivs_id += 1
     self.indivs.append(bi.copy())
     return bi

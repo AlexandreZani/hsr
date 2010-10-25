@@ -16,14 +16,24 @@
 
 from hsr_server.hsr_db import *
 from hsr_server.tests.HSRDBTests import HSRDBTestImpl
+from sqlalchemy import *
 
 def pytest_generate_tests(metafunc):
   if 'db' in metafunc.funcargnames:
     metafunc.addcall(param=1)
+    metafunc.addcall(param=2)
 
 def pytest_funcarg__db(request):
   if request.param == 1:
     return HSRDBTestImpl()
+  elif request.param == 2:
+    db = create_engine("mysql://test:password@localhost/HSRDB")
+    metadata = MetaData(db)
+    mos = Table('Objects', metadata, autoload=True)
+    mos.delete().execute()
+    indivs = Table('Individuals', metadata, autoload=True)
+    indivs.delete().execute()
+    return HSRDBSqlAlchemyImpl(db)
 
 class TestDB:
   def test_NewMuseumObject(self, db):
@@ -104,10 +114,12 @@ class TestDB:
     suffix_design = "b"
     min_age = 10
     max_age = 20
+    mo = 1
     sex = BioIndividual.NA
-    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age, sex)
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, mo)
     bi = BioIndividual(nbi.indiv_id, suffix, suffix_design, min_age,
-        max_age, sex)
+        max_age, sex, mo)
     assert nbi == bi
 
   def test_getIndividualById(self, db):
@@ -115,8 +127,10 @@ class TestDB:
     suffix_design = "b"
     min_age = 10
     max_age = 20
+    mo = 1
     sex = BioIndividual.NA
-    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age, sex)
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, mo)
     bi = db.getIndividualById(nbi.indiv_id)
     assert nbi == bi
 
@@ -126,7 +140,8 @@ class TestDB:
     min_age = 10
     max_age = 20
     sex = BioIndividual.NA
-    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age, sex)
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, 1)
     bi = db.getIndividualById(nbi.indiv_id+1)
     assert bi == None
 
@@ -136,7 +151,8 @@ class TestDB:
     min_age = 10
     max_age = 20
     sex = BioIndividual.NA
-    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age, sex)
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, 1)
     nbi.indiv_id += 1
     nbi.min_age += 5
     nbi.suffix_design = "d"
@@ -150,7 +166,8 @@ class TestDB:
     min_age = 10
     max_age = 20
     sex = BioIndividual.NA
-    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age, sex)
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, 1)
     nbi.indiv_id += 1
     nbi.min_age += 5
     nbi.suffix_design = "d"
@@ -159,18 +176,18 @@ class TestDB:
     assert bi == None
 
   def test_getAllIndividuals(self, db):
-    bi1 = db.newIndividual("a", "a1", 10, 30, "NA")
-    bi2 = db.newIndividual("b", "b1", 130, 310, "NA")
-    bi3 = BioIndividual(121, "fa", "d1", 140, 320, "NA")
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+    bi2 = db.newIndividual("b", "b1", 130, 310, "NA", 1)
+    bi3 = BioIndividual(121, "fa", "d1", 140, 320, "NA", 1)
     bis = db.getAllIndividuals()
     assert bi1 in bis
     assert bi2 in bis
     assert bi3 not in bis
 
   def test_deleteIndividual(self, db):
-    bi1 = db.newIndividual("a", "a1", 10, 30, "NA")
-    bi2 = db.newIndividual("b", "b1", 130, 310, "NA")
-    bi3 = db.newIndividual("sb", "fb1", 1330, 1310, "NA")
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+    bi2 = db.newIndividual("b", "b1", 130, 310, "NA", 1)
+    bi3 = db.newIndividual("sb", "fb1", 1330, 1310, "NA", 1)
     db.deleteIndividual(bi3.indiv_id)
     bis = db.getAllIndividuals()
     assert bi1 in bis

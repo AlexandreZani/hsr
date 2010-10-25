@@ -14,13 +14,46 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from sqlalchemy import *
 
 def abstract():
   import inspect
   caller = inspect.getouterframes(inspect.currentframe())[1][3]
   raise NotImplementedError(caller + ' must be implemented in subclass')
 
-class MuseumObject:
+class MuseumObject(object):
+  @property
+  def object_id(self):
+    return self._object_id
+
+  @object_id.setter
+  def object_id(self, value):
+    self._object_id = int(value)
+
+  @property
+  def object_num(self):
+    return self._object_num
+
+  @object_num.setter
+  def object_num(self, value):
+    self._object_num = str(value)
+
+  @property
+  def catalogue_num(self):
+    return self._catalogue_num
+
+  @catalogue_num.setter
+  def catalogue_num(self, value):
+    self._catalogue_num = str(value)
+
+  @property
+  def site(self):
+    return self._site
+
+  @site.setter
+  def site(self, value):
+    self._site = str(value)
+
   def __init__(self, object_id = None, catalogue_num = None,
       object_num = None, site = None):
     self.object_id = object_id
@@ -47,13 +80,14 @@ class MuseumObject:
 
   def toXml(self):
     xml = "<museum_object>"
-    xml += "<object_number>" + self.object_num + "</ObjectNumber>"
-    xml += "<catalogue_number>" + self.object_num + "</catalogue_number>"
-    xml += "<site>" + self.object_num + "</site>"
+    xml += "<object_id>" + str(self.object_id) + "<object_id>"
+    xml += "<object_number>" + str(self.object_num) + "</object_number>"
+    xml += "<catalogue_number>" + str(self.catalogue_num) + "</catalogue_number>"
+    xml += "<site>" + str(self.site) + "</site>"
     xml += "</museum_object>"
     return xml
 
-class BioIndividual:
+class BioIndividual(object):
   NA = 0
   MALE = 1
   FEMALE = 2
@@ -64,7 +98,10 @@ class BioIndividual:
 
   @museum_object.setter
   def museum_object(self, value):
-    self._museum_object = str(value)
+    try:
+      self._museum_object=str(value.catalogue_num)
+    except AttributeError:
+      self._museum_object=str(value)
 
   @property
   def min_age(self):
@@ -80,7 +117,7 @@ class BioIndividual:
 
   @max_age.setter
   def max_age(self, val):
-    self._age = float(max_age)
+    self._max_age = float(val)
 
   @property
   def sex(self):
@@ -107,10 +144,7 @@ class BioIndividual:
     self.min_age = min_age
     self.max_age = max_age
     self.sex = sex
-    try:
-      self.museum_object = str(museum_object.catalogue_num)
-    except AttributeError:
-      self.museum_object = str(museum_object)
+    self.museum_object = museum_object
 
   def copy(self):
     return BioIndividual(self.indiv_id, self.suffix,
@@ -168,6 +202,185 @@ class HSRDB:
   def writeIndividual(self, invidividual): abstract()
   def getIndividualById(self, indiv_id): abstract()
   def getAllIndividuals(self): abstract()
-  def newIndividual(self, suffix, suffix_design, min_age, max_age, sex): abstract()
+  def newIndividual(self, suffix, suffix_design, min_age, max_age, sex, museum_object): abstract()
   def deleteIndividual(self, indiv_id): abstract()
   def deleteMuseumObject(self, object_id): abstract()
+
+class HSRDBSqlAlchemyImpl(HSRDB):
+  def __init__(self, db):
+    self.db = db
+
+  def newMuseumObject(self, catalogue_num, object_num, site):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.insert().values(CatalogueID=catalogue_num,
+        ObjectNumber=object_num, Site=site)
+    result = conn.execute(stmt)
+    mo_id = result.lastrowid
+    conn.close()
+    return MuseumObject(mo_id, catalogue_num, object_num, site)
+
+  def writeMuseumObject(self, museum_object):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.update().where(
+        mos.c.ObjectID==museum_object.object_id).values(
+            CatalogueNumber=museum_object.catalogue_num,
+          ObjectNumber=museum_object.object_num,
+          Site=museum_object.site
+          )
+    result = conn.execute(stmt)
+    conn.close()
+    if result.rowcount >= 1:
+      return True
+    return False
+
+  def getMuseumObjectById(self, object_id):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.select().where(mos.c.ObjectID==object_id)
+    result = conn.execute(stmt)
+    row = result.fetchone()
+    conn.close()
+
+    if not row:
+      return None
+
+    return MuseumObject(row.ObjectID, row.CatalogueID,
+        row.ObjectNumber, row.Site)
+
+  def getAllMuseumObjects(self):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.select()
+    result = conn.execute(stmt)
+    
+    mos = []
+    for row in result:
+      mos.append(MuseumObject(row.ObjectID, row.CatalogueID,
+        row.ObjectNumber, row.Site))
+    return mos
+
+  def deleteMuseumObject(self, object_id):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.delete().where(mos.c.ObjectID==object_id)
+    result = conn.execute(stmt)
+    conn.close()
+
+    if result.rowcount >= 1:
+      return True
+    return False
+
+  def newIndividual(self, suffix, suffix_design, min_age, max_age,
+      sex, museum_object):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+    bi = BioIndividual(
+        0,
+        suffix,
+        suffix_design,
+        min_age,
+        max_age,
+        sex,
+        museum_object)
+
+    stmt = indivs.insert().values(
+        SuffixDesignation=bi.suffix_design,
+        Suffix=bi.suffix,
+        AgeMax=bi.max_age,
+        AgeMin=bi.min_age,
+        Sex=bi.sex,
+        CatalogueID=bi.museum_object
+        )
+    result = conn.execute(stmt)
+    bi.indiv_id = result.lastrowid
+    conn.close()
+    return bi
+
+  def getIndividualById(self, indiv_id):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+    stmt = indivs.select().where(indivs.c.IndividualID==indiv_id)
+    row = conn.execute(stmt).fetchone()
+    conn.close()
+
+    if not row:
+      return None
+    return BioIndividual(
+        row.IndividualID,
+        row.Suffix,
+        row.SuffixDesignation,
+        row.AgeMin,
+        row.AgeMax,
+        row.Sex,
+        row.CatalogueID)
+
+  def writeIndividual(self, bi):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+
+    stmt = indivs.update().values(
+        SuffixDesignation=bi.suffix_design,
+        Suffix=bi.suffix,
+        AgeMax=bi.max_age,
+        AgeMin=bi.min_age,
+        Sex=bi.sex,
+        CatalogueID=bi.museum_object
+        ).where(indivs.c.IndividualID==bi.indiv_id)
+    result = conn.execute(stmt)
+    conn.close()
+
+    if result.rowcount >= 1:
+      return True
+    return False
+
+  def getAllIndividuals(self):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+
+    stmt = indivs.select()
+    result = conn.execute(stmt)
+    conn.close()
+
+    indivs = []
+    for row in result:
+      indivs.append(BioIndividual(
+        row.IndividualID,
+        row.Suffix,
+        row.SuffixDesignation,
+        row.AgeMin,
+        row.AgeMax,
+        row.Sex,
+        row.CatalogueID))
+
+    return indivs
+
+  def deleteIndividual(self, indiv_id):
+    conn = self.db.connect()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+
+    stmt = indivs.delete().where(indivs.c.IndividualID==indiv_id)
+    result = conn.execute(stmt)
+    conn.close()
+
+    if result.rowcount >= 1:
+      return True
+    return False
+
+
+
+
+
+
+

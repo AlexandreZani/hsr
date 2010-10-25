@@ -18,7 +18,7 @@
   <table name="Objects">
     <field name="ObjectID" type="INT" unique="true" indexed="true" autoincrement="true" />
     <field name="CatalogueID" type="VARCHAR(255)" indexed="true" />
-    <field name="ObjectNumber" type="INT" />
+    <field name="ObjectNumber" type="VARCHAR(255)" />
     <field name="Site" type="VARCHAR(255)" />
   </table>
 
