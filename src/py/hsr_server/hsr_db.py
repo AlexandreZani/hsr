@@ -208,10 +208,13 @@ class HSRDB:
 
 class HSRDBSqlAlchemyImpl(HSRDB):
   def __init__(self, db):
-    self.db = db
+    self.db_engine = db
+
+  def getConn(self):
+    return self.db_engine.connect()
 
   def newMuseumObject(self, catalogue_num, object_num, site):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.insert().values(CatalogueID=catalogue_num,
@@ -222,7 +225,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return MuseumObject(mo_id, catalogue_num, object_num, site)
 
   def writeMuseumObject(self, museum_object):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.update().where(
@@ -238,7 +241,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return False
 
   def getMuseumObjectById(self, object_id):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.select().where(mos.c.ObjectID==object_id)
@@ -253,7 +256,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
         row.ObjectNumber, row.Site)
 
   def getAllMuseumObjects(self):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.select()
@@ -266,7 +269,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return mos
 
   def deleteMuseumObject(self, object_id):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.delete().where(mos.c.ObjectID==object_id)
@@ -279,7 +282,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
 
   def newIndividual(self, suffix, suffix_design, min_age, max_age,
       sex, museum_object):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
     bi = BioIndividual(
@@ -305,7 +308,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return bi
 
   def getIndividualById(self, indiv_id):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
     stmt = indivs.select().where(indivs.c.IndividualID==indiv_id)
@@ -324,7 +327,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
         row.CatalogueID)
 
   def writeIndividual(self, bi):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
 
@@ -344,7 +347,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return False
 
   def getAllIndividuals(self):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
 
@@ -366,7 +369,7 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return indivs
 
   def deleteIndividual(self, indiv_id):
-    conn = self.db.connect()
+    conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
 
