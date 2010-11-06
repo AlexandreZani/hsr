@@ -31,31 +31,31 @@ credential_types = {
 
 class HSRCredentialsException(Exception): pass
 
-def getHSRCredentials(method, args, ip):
+def getHSRCredentials(method, args, ip, auth_db=None):
   if method in credential_types:
-    return globals()[credential_types[method]](args, ip)
+    return globals()[credential_types[method]](args, ip, auth_db)
   return NoneCredentials(args, ip)
 
-class HSRCredentials:
-  def getUserId(self, auth_db): abstract()
+class HSRCredentials(object):
+  def getUserId(self): abstract()
   def getResponse(self): abstract()
   def getCredentialsType(self): abstract()
 
 class NoneCredentials(HSRCredentials):
-  def __init__(self, args, ip):
+  def __init__(self, args, ip, db):
     pass
 
   def getCredentialsType(self):
     return "None"
 
-  def getUserId(self, auth_db=None):
+  def getUserId(self):
     raise HSRCredentialsException("InvalidCredentials")
 
   def getResponse(self):
     return ""
 
 class UsernamePasswordCredentials(HSRCredentials):
-  def __init__(self, args, ip):
+  def __init__(self, args, ip, auth_db):
     try:
       self.username = args["username"]
       self.password = args["password"]
@@ -63,18 +63,19 @@ class UsernamePasswordCredentials(HSRCredentials):
       self.username = None
       self.password = None
     self.ip = ip
+    self.auth_db = auth_db
 
   def getCredentialsType(self):
     return "UsernamePassword"
 
-  def getUserId(self, auth_db):
-    self.user = auth_db.getUserByName(self.username)
+  def getUserId(self):
+    self.user = self.auth_db.getUserByName(self.username)
     if self.user == None:
       raise HSRCredentialsException("InvalidCredentials")
     if not self.user.CheckPassword(self.password):
       raise HSRCredentialsException("InvalidCredentials")
 
-    self.session = auth_db.newSession(self.user.user_id)
+    self.session = self.auth_db.newSession(self.user.user_id)
 
     return self.user.user_id
 
@@ -82,18 +83,20 @@ class UsernamePasswordCredentials(HSRCredentials):
     return "<credentials><session_id>" + self.session.session_id + "</session_id></credentials>"
 
 class SessionIdCredentials(HSRCredentials):
-  def __init__(self, args, ip):
+  def __init__(self, args, ip, auth_db):
     try:
       self.session_id = args["session_id"]
       self.timeout = 60*60
     except KeyError, (ex):
       self.session_id = None
+    self.ip = ip
+    self.auth_db=auth_db
 
   def getCredentialsType(self):
     return "SessionId"
 
-  def getUserId(self, auth_db):
-    self.session = auth_db.getSessionById(self.session_id)
+  def getUserId(self):
+    self.session = self.auth_db.getSessionById(self.session_id)
     if self.session == None:
       raise HSRCredentialsException("InvalidCredentials")
     if (self.session.last_used - time.time()) > self.timeout:
