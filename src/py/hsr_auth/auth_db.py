@@ -19,13 +19,14 @@ from os import urandom
 import time
 import MySQLdb
 from MySQLdb import IntegrityError
+from sqlalchemy import *
 
 def abstract():
   import inspect
   caller = inspect.getouterframes(inspect.currentframe())[1][3]
   raise NotImplementedError(caller + ' must be implemented in subclass')
 
-class User:
+class User(object):
   def __init__(self, user_id = None, username = None, password_hash =
       None, salt = None):
     self.user_id = user_id
@@ -65,7 +66,7 @@ class User:
     except Exception:
       return False
 
-class Session:
+class Session(object):
   def __init__(self, user_id = None, session_id = None, created =
       None, last_used = None):
     self.session_id = str(session_id)
@@ -114,9 +115,15 @@ class HSRAuthDB:
   def getSessionsByUser(self, user): abstract()
 
   def newSession(self, user_id):
-    session = Session(user_id)
-    while not self.writeSession(session):
+    need_new_session = True
+    while need_new_session:
+      need_new_session = False
       session = Session(user_id)
+      try:
+        self.writeSession(session)
+      except HSRAuthDB:
+        need_new_session = True
+
     return session
 
 
@@ -209,8 +216,7 @@ class HSRAuthDBMySQLImpl(HSRAuthDB):
     try:
       cursor.execute(sql, params)
     except IntegrityError:
-      return False
-    return True
+      raise HSRAuthDBExcept("Could not write Session!")
 
   def deleteSession(self, session):
     params = [session.session_id, session.user_id]
@@ -230,6 +236,146 @@ class HSRAuthDBMySQLImpl(HSRAuthDB):
       sessions.append(Session(session[0], session[1], session[2],
         session[3]))
     return sessions
+
+class HSRAuthDBSQLAlchemyImpl(HSRAuthDB):
+  def __init__(self, db):
+    self.db_engine = db
+
+  def getConn(self):
+    return self.db_engine.connect()
+
+  def createUser(self, username, password):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+
+    user = User(0, username, password)
+    stmt = users.insert().values(Username=user.username,
+        Salt=user.salt, PasswordHash=user.password_hash)
+    try:
+      result = conn.execute(stmt)
+    except Exception:
+      conn.close()
+      raise HSRAuthDBExcept("Could not create User!")
+
+    user.user_id = result.lastrowid
+    conn.close()
+    return user
+
+  def writeUser(self, user):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+
+    stmt = users.update().values(
+        Username=user.username,
+        Salt=user.salt,
+        PasswordHash=user.password_hash
+        ).where(users.c.UserID==user.user_id)
+    try:
+      result = conn.execute(stmt)
+    except Exception:
+      conn.close()
+      raise HSRAuthDBExcept("Could not write User!")
+
+    conn.close()
+
+    if result.rowcount < 1:
+      raise HSRAuthDBExcept("Could not write User!")
+
+  def getUserByName(self, username):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+
+    stmt = users.select().where(users.c.Username==username)
+    result = conn.execute(stmt)
+    row = result.fetchone()
+    conn.close()
+
+    if not row:
+      return None
+
+    return User(row.UserID, row.Username, row.PasswordHash, row.Salt)
+
+  def deleteUser(self, user):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+
+    stmt = users.delete().where(users.c.UserID==user.user_id)
+    result = conn.execute(stmt)
+    conn.close()
+
+  def getSessionById(self, session_id):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    sessions = Table('Sessions', metadata, autoload=True)
+
+    stmt = sessions.select().where(sessions.c.SessionID==session_id)
+    result = conn.execute(stmt)
+    row = result.fetchone()
+    conn.close()
+
+    if not row:
+      return None
+
+    return Session(row.UserID, row.SessionID, row.CreationTime,
+        row.LastTouched)
+
+  def writeSession(self, session):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    sessions = Table('Sessions', metadata, autoload=True)
+
+    stmt = sessions.insert().values(
+        UserID=session.user_id,
+        SessionID=session.session_id,
+        CreationTime=session.created,
+        LastTouched=session.last_used)
+    try:
+      result = conn.execute(stmt)
+    except Exception:
+      raise HSRAuthDBExcept("Could not write Session!")
+    conn.close()
+
+  def deleteSession(self, session):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    sessions = Table('Sessions', metadata, autoload=True)
+
+    stmt = sessions.delete().where(sessions.c.SessionID==session.session_id)
+    result = conn.execute(stmt)
+    conn.close()
+
+  def getSessionsByUser(self, user):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    sessions = Table('Sessions', metadata, autoload=True)
+
+    stmt = sessions.select().where(sessions.c.UserID==user.user_id)
+    results = conn.execute(stmt)
+    conn.close()
+
+    matching_sessions = []
+    for row in results:
+      matching_sessions.append(Session(row.UserID, row.SessionID, row.CreationTime,
+         row.LastTouched))
+
+    return matching_sessions
+
+  def newSession(self, user_id):
+    need_new_session = True
+    while need_new_session:
+      need_new_session = False
+      session = Session(user_id)
+      try:
+        self.writeSession(session)
+      except HSRAuthDB:
+        need_new_session = True
+
+    return session
+
 
 
 

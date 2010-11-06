@@ -14,8 +14,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from hsr_auth.auth_db import User, Session, HSRAuthDBMySQLImpl
+from hsr_auth.auth_db import *
 from hsr_auth.tests.HSRAuthDBTest import HSRAuthDBTestImpl, HSRAuthDBExcept
+from sqlalchemy import *
 
 class TestUser:
   def test_CheckPasswordTrue(self):
@@ -34,6 +35,7 @@ def pytest_generate_tests(metafunc):
   if 'db' in metafunc.funcargnames:
     metafunc.addcall(param=1)
     metafunc.addcall(param=2)
+    metafunc.addcall(param=3)
 
 def pytest_funcarg__db(request):
   if request.param == 1:
@@ -41,6 +43,16 @@ def pytest_funcarg__db(request):
   elif request.param == 2:
     return HSRAuthDBMySQLImpl('localhost', 'test', 'password',
         'HSRAuthDB', True)
+  elif request.param == 3:
+    db = create_engine("mysql://test:password@localhost/HSRAuthDB")
+    conn = db.connect()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+    users.delete().execute()
+    sessions = Table('Sessions', metadata, autoload=True)
+    sessions.delete().execute()
+    conn.close()
+    return HSRAuthDBSQLAlchemyImpl(db)
 
 class TestDB:
   def test_CreateUser(self, db):
@@ -120,7 +132,12 @@ class TestDB:
     session = Session(7657856, 46431)
     db.writeSession(session)
     session = Session(7657856, 46431)
-    assert not db.writeSession(session)
+    try:
+      db.writeSession(session)
+    except HSRAuthDBExcept, (instance):
+      assert str(instance) == "Could not write Session!"
+    else:
+      assert False
 
   def test_DeleteSession(self, db):
     session = Session(7657856, 46431)
@@ -138,3 +155,9 @@ class TestDB:
 
     assert session == sessions[0]
 
+  def test_newSession(self, db):
+    user = User(1, 'armence', 'Hello!')
+    session = db.newSession(user.user_id)
+    session2 = db.getSessionsByUser(user)[0]
+
+    assert session == session2

@@ -65,14 +65,20 @@ class HSRAuthDBTestImpl(HSRAuthDB):
   def writeSession(self, session):
     for i in range(len(self.sessions)):
       if(session.session_id == self.sessions[i].session_id):
-        return False
+        raise HSRAuthDBExcept("Could not write Session!")
     self.sessions.append(session)
-    return True
 
   def newSession(self, user_id):
     session = Session(user_id)
-    while not self.writeSession(session):
+    gen_new_session = True
+    while gen_new_session:
+      gen_new_session = False
       session = Session(user_id)
+      try:
+        self.writeSession(session)
+      except HSRAuthDBExcept:
+        gen_new_session = True
+
     return session
 
   def getSessionById(self, session_id):
