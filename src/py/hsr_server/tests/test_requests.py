@@ -39,7 +39,7 @@ class TestPingRequest:
 
   def test_PingExec(self):
     request = getHSRRequest("Ping", {}, MockCredentials(True), None)
-    assert "<response><type>Ping</type></response>" == request.execute()[0]
+    assert "<response>Ping</response>" == request.execute()[0]
 
 class TestListMuseumObjects:
   def test_ListMuseumObjectsFactory(self):

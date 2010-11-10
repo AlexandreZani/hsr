@@ -49,7 +49,7 @@ class PingRequest(HSRRequest):
   def execute(self):
     self.credentials.getUserId()
     cred_response = self.credentials.getResponse()
-    requ_response = "<response><type>Ping</type></response>"
+    requ_response = "<response>Ping</response>"
     return (requ_response, cred_response)
 
 class AllObjectsRequest(HSRRequest):
