@@ -41,7 +41,7 @@ def pytest_funcarg__db(request):
   if request.param == 1:
     return HSRAuthDBTestImpl()
   elif request.param == 2:
-    return HSRAuthDBMySQLImpl('localhost', 'test', 'password',
+    return HSRAuthDBMySqlImpl('localhost', 'test', 'password',
         'HSRAuthDB', True)
   elif request.param == 3:
     db = create_engine("mysql://test:password@localhost/HSRAuthDB")
@@ -52,7 +52,7 @@ def pytest_funcarg__db(request):
     sessions = Table('Sessions', metadata, autoload=True)
     sessions.delete().execute()
     conn.close()
-    return HSRAuthDBSQLAlchemyImpl(db)
+    return HSRAuthDBSqlAlchemyImpl(db)
 
 class TestDB:
   def test_CreateUser(self, db):

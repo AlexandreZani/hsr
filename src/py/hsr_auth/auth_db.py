@@ -127,7 +127,7 @@ class HSRAuthDB:
     return session
 
 
-class HSRAuthDBMySQLImpl(HSRAuthDB):
+class HSRAuthDBMySqlImpl(HSRAuthDB):
   def __init__(self, host, user, password, database, clear=False):
     self.db_host = host
     self.db_user = user
@@ -237,7 +237,7 @@ class HSRAuthDBMySQLImpl(HSRAuthDB):
         session[3]))
     return sessions
 
-class HSRAuthDBSQLAlchemyImpl(HSRAuthDB):
+class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
   def __init__(self, db):
     self.db_engine = db
 
