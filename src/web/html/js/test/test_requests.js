@@ -16,12 +16,12 @@
 
 function TestPingRequest() {
   this.test_Factory = function() {
-    request = getRequest("Ping", null);
+    var request = getRequest("Ping", null);
     assert(request.getRequestType() == "Ping");
   }
 
   this.test_Xml = function() {
-    request = getRequest("Ping", null);
+    var request = getRequest("Ping", null);
     assert(request.toXml() == "<request><type>Ping</type></request>");
   }
 }

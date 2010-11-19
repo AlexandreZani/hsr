@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-global_obj = new Object();
-
+var global_obj = new Object();
 
 function MockXhr() {
   this.readyState = 0;
@@ -44,20 +43,20 @@ function MockXhr() {
 
 function TestMessageDispatcher() {
   this.test_NewDispatcher = function() {
-    dispatcher = new MessageDispatcher(new MockXhr());
+    var dispatcher = new MessageDispatcher(new MockXhr());
     assert(dispatcher != undefined);
   }
 
   this.test_Message = function() {
     global_obj = new Object();
-    msg = new Message("alpha",
+    var msg = new Message("alpha",
         function(xhr, msg) {
           global_obj.response = xhr.responseText; 
           global_obj.original = msg.msg;
         });
 
-    xhr = new MockXhr();
-    dispatcher = new MessageDispatcher(xhr);
+    var xhr = new MockXhr();
+    var dispatcher = new MessageDispatcher(xhr);
 
     dispatcher.sendMessage(msg);
     xhr.respond("beta");
@@ -68,17 +67,17 @@ function TestMessageDispatcher() {
   this.test_MessageQueue = function() {
     global_obj = new Object();
 
-    xhr = new MockXhr();
-    dispatcher = new MessageDispatcher(xhr);
+    var xhr = new MockXhr();
+    var dispatcher = new MessageDispatcher(xhr);
 
-    msg1 = new Message("alpha",
+    var msg1 = new Message("alpha",
         function(xhr, msg) {
           global_obj.response = xhr.responseText; 
           global_obj.original = msg.msg;
         });
     dispatcher.sendMessage(msg1);
 
-    msg2 = new Message("omicron",
+    var msg2 = new Message("omicron",
         function(xhr, msg) {
           global_obj.response = xhr.responseText; 
           global_obj.original = msg.msg;

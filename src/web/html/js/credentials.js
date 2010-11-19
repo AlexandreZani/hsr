@@ -34,7 +34,7 @@ function UsernamePasswordCredentials(args) {
   }
 
   this.toXml = function() {
-    xml = "<credentials>";
+    var xml = "<credentials>";
     xml += "<type>UsernamePassword</type>";
     xml += "<args>";
     xml += "<username>" + this.username + "</username>";

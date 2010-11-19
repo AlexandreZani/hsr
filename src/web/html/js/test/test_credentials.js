@@ -16,25 +16,25 @@
 
 function TestUsernamePasswordCredentials() {
   this.test_Factory = function() {
-    credentials = getCredentials("UsernamePassword", new Array());
+    var credentials = getCredentials("UsernamePassword", new Array());
     assert(credentials.getCredentialsType() == "UsernamePassword");
   }
 
   this.test_Values = function() {
-    args = new Array();
+    var args = new Array();
     args["username"] = "armence";
     args["password"] = "test";
-    credentials = getCredentials("UsernamePassword", args);
+    var credentials = getCredentials("UsernamePassword", args);
 
     assert(credentials.username == "armence");
     assert(credentials.password == "test");
   }
 
   this.test_Xml = function() {
-    args = new Array();
+    var args = new Array();
     args["username"] = "armence";
     args["password"] = "test";
-    credentials = getCredentials("UsernamePassword", args);
+    var credentials = getCredentials("UsernamePassword", args);
 
     assert(credentials.toXml() == "<credentials><type>UsernamePassword</type><args><username>armence</username><password>test</password></args></credentials>")
   }
