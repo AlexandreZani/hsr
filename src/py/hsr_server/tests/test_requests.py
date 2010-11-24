@@ -32,6 +32,16 @@ class MockCredentials(HSRCredentials):
   def getResponse(self):
     return self.response
 
+class TestUnknownRequestType:
+  def test_UnknownFactory(self):
+    method = "asdasda"
+    try:
+      request = getHSRRequest(method, {}, None, None)
+    except HSRRequestException, (instance):
+      assert "Unknown request type " + method == str(instance)
+    else:
+      assert False
+
 class TestPingRequest:
   def test_PingFactory(self):
     request = getHSRRequest("Ping", {}, None, None)
