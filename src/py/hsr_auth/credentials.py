@@ -34,7 +34,7 @@ class HSRCredentialsException(Exception): pass
 def getHSRCredentials(method, args, ip, auth_db=None):
   if method in credential_types:
     return globals()[credential_types[method]](args, ip, auth_db)
-  return NoneCredentials(args, ip)
+  return NoneCredentials(args, ip, auth_db)
 
 class HSRCredentials(object):
   def getUserId(self): abstract()
