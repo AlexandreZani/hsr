@@ -1,0 +1,17 @@
+#!/bin/sh
+
+sources="credentials.js main_api.js message_dispatcher.js requests.js"
+out="hsr_api.js"
+src_path=`dirname $0`
+
+rm -f "${src_path}/${out}"
+
+for file in `echo ${sources}`
+do
+  if [ -e "${src_path}/${out}" ]
+  then
+    tail -n +16 "${src_path}/${file}" >> "${src_path}/${out}"
+  else
+    cp "${src_path}/${file}" "${src_path}/${out}"
+  fi
+done
