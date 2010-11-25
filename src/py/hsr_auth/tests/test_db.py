@@ -65,6 +65,12 @@ class TestDB:
     assert user.salt == user2.salt
     assert user == user2
 
+  def test_GetUserById(self, db):
+    user = db.createUser('armence', 'Hello!')
+    user2 = db.getUserById(user.user_id)
+
+    assert user == user2
+
   def test_CreateSameUsername(self, db):
     user = db.createUser('armence', 'Hello!')
     try:

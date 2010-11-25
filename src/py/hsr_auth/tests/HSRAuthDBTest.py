@@ -28,6 +28,12 @@ class HSRAuthDBTestImpl(HSRAuthDB):
         return self.users[i]
       return None
 
+  def getUserById(self, uid):
+    for i in range(len(self.users)):
+      if(uid == self.users[i].user_id):
+        return self.users[i]
+      return None
+
   def writeUser(self, user):
     for i in range(len(self.users)):
       if(user.user_id == self.users[i].user_id):

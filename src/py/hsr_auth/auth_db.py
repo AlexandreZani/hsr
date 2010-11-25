@@ -100,6 +100,8 @@ class HSRAuthDBExcept(Exception): pass
 class HSRAuthDB:
   def getUserByName(self, username): abstract()
 
+  def getUserById(self, uid): abstract()
+
   def writeUser(self, user): abstract()
 
   def createUser(self, username, password): abstract()
@@ -181,6 +183,18 @@ class HSRAuthDBMySqlImpl(HSRAuthDB):
     params = [username]
     sql = """SELECT UserID, Username, PasswordHash, Salt FROM Users
     WHERE Username=%s"""
+    cursor = self.db.cursor()
+    cursor.execute(sql, params)
+    try:
+      result = cursor.fetchall()[0]
+    except IndexError:
+      return None
+    return User(result[0], result[1], result[2], result[3])
+
+  def getUserById(self, uid):
+    params = [uid]
+    sql = """SELECT UserID, Username, PasswordHash, Salt FROM Users
+    WHERE UserID=%s"""
     cursor = self.db.cursor()
     cursor.execute(sql, params)
     try:
@@ -289,6 +303,21 @@ class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
     users = Table('Users', metadata, autoload=True)
 
     stmt = users.select().where(users.c.Username==username)
+    result = conn.execute(stmt)
+    row = result.fetchone()
+    conn.close()
+
+    if not row:
+      return None
+
+    return User(row.UserID, row.Username, row.PasswordHash, row.Salt)
+
+  def getUserById(self, uid):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    users = Table('Users', metadata, autoload=True)
+
+    stmt = users.select().where(users.c.UserID==uid)
     result = conn.execute(stmt)
     row = result.fetchone()
     conn.close()
