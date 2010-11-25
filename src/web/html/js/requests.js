@@ -21,8 +21,21 @@
 function getRequest(method, args) {
   var request_types = new Array();
   request_types["Ping"] = PingRequest;
+  request_types["ChangePassword"] = ChangePasswordRequest;
 
   return new request_types[method](args);
+}
+
+function ChangePasswordRequest(args) {
+  this.new_password = args["new_password"];
+
+  this.getRequestType = function() {
+    return "ChangePassword";
+  }
+
+  this.toXml = function() {
+    return "<request><type>ChangePassword</type><args><new_password>" + this.new_password + "</new_password></args></request>";
+  }
 }
 
 function PingRequest(args) {

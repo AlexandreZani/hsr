@@ -36,6 +36,7 @@ function HsrApi(dispatcher) {
 
     try {
       var credentials = xml_doc.getElementsByTagName("credentials")[0];
+      setCookie("credentials", (new XMLSerializer()).serializeToString(credentials), 1);
     } catch(ex) {
       credentials = null;
     }
@@ -63,6 +64,20 @@ function HsrApi(dispatcher) {
 
     var msg = new Message(msg_xml, this.masterCallback);
     msg.type = "Login";
+    msg.outer_callback = callback;
+    this.dispatcher.sendMessage(msg);
+  }
+
+  this.changePassword = function(new_password, callback) {
+    var args = new Array();
+    args["new_password"] = new_password;
+
+    var request = getRequest("ChangePassword", args);
+
+    var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
+
+    var msg = new Message(msg_xml, this.masterCallback);
+    msg.type = "ChangePassword";
     msg.outer_callback = callback;
     this.dispatcher.sendMessage(msg);
   }

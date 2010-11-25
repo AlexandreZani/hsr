@@ -10,6 +10,7 @@ from cgi import parse_qs, escape
 from xml.dom.minidom import parseString
 import ConfigParser
 import sys, os
+from urllib2 import unquote
 
 config_file = "/etc/hsr/hsr.conf"
 html_path = "../html/"
@@ -63,13 +64,13 @@ class Application(object):
     filename = environ['PATH_INFO'][8:]
 
     if filename == "":
-      filename = "login.html"
+      filename = "main.html"
 
     if filename != "login.html" and filename[-5:] == ".html":
       try:
         if environ['HTTP_COOKIE'][:12] != "credentials=":
           raise Exception()
-        (cred_type, cred_args) = self.handler.parseMethod(parseString(environ['HTTP_COOKIE'][12:]))
+        (cred_type, cred_args) = self.handler.parseMethod(parseString(unquote(environ['HTTP_COOKIE'][12:])))
         creds = getHSRCredentials(cred_type, cred_args, None, self.auth_db)
         creds.getUserId()
       except Exception, (instance):
@@ -90,6 +91,7 @@ class Application(object):
       request_body_size = 0
 
     request_body = environ['wsgi.input'].read(request_body_size)
+    print request_body
 
     start_response('200 OK', [('Content-type','text/xml')])
     return [self.handler.execute(request_body)]

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sources="credentials.js main_api.js message_dispatcher.js requests.js"
+sources="credentials.js main_api.js message_dispatcher.js requests.js cookies.js"
 out="hsr_api.js"
 src_path=`dirname $0`
 
