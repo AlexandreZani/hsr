@@ -80,8 +80,7 @@ class UsernamePasswordCredentials(HSRCredentials):
     return self.user.user_id
 
   def getResponse(self):
-    return "<credentials><type>SessionId</type><args><session_id>"
-    + self.session.session_id + "</session_id></args></credentials>"
+    return "<credentials><type>SessionId</type><args><session_id>" + self.session.session_id + "</session_id></args></credentials>"
 
 class SessionIdCredentials(HSRCredentials):
   def __init__(self, args, ip, auth_db):

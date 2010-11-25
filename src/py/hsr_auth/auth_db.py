@@ -76,7 +76,7 @@ class Session(object):
       self.user_id = None
     self.created = created
     self.last_used = last_used
-    if(self.session_id == None):
+    if(session_id == None):
       sha1func = sha1()
       sha1func.update(urandom(128))
       self.session_id = sha1func.hexdigest()
@@ -371,7 +371,7 @@ class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
       session = Session(user_id)
       try:
         self.writeSession(session)
-      except HSRAuthDB:
+      except HSRAuthDBExcept:
         need_new_session = True
 
     return session

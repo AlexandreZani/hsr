@@ -128,6 +128,10 @@ class TestDB:
 
     assert session2 == session
 
+  def test_SessionNotNone(self, db):
+    session = Session(1231231)
+    assert None != session.session_id
+
   def test_CreateSessionFail(self, db):
     session = Session(7657856, 46431)
     db.writeSession(session)
