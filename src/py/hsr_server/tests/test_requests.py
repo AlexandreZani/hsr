@@ -15,8 +15,9 @@
 #   limitations under the License.
 
 from hsr_server.requests import *
-from hsr_auth.credentials import HSRCredentialsException, HSRCredentials
+from hsr_auth.credentials import HSRCredentialsException, HSRCredentials, getHSRCredentials
 from hsr_server.tests.HSRDBTests import HSRDBTestImpl
+from hsr_auth.tests.HSRAuthDBTest import HSRAuthDBTestImpl, HSRAuthDBExcept
 
 class MockCredentials(HSRCredentials):
   def __init__(self, valid=True, user_id=None, response=""):
@@ -202,6 +203,32 @@ class TestGetIndividualRequest:
       assert str(instance) == "InvalidCredentials"
     else:
       assert False
+
+class TestChangePasswordRequest:
+  def test_ChangePasswordRequestFactory(self):
+    request = getHSRRequest("ChangePassword", {"new_password" : "s"}, None, None)
+    assert request.getRequestType() == "ChangePassword"
+
+  def test_ChangePasswordRequest(self):
+    db = HSRAuthDBTestImpl()
+    username = "loki"
+    password = "key"
+    user = db.createUser(username, password)
+    session = db.newSession(user.user_id)
+
+    args = {"session_id" : session.session_id}
+    credentials = getHSRCredentials("SessionId", args, "127.0.0.1", db)
+
+    new_password = "card"
+    args = {"new_password" : new_password}
+    request = getHSRRequest("ChangePassword", args, credentials, None)
+
+    request.execute()
+
+    user = db.getUserByName(username)
+    assert user.CheckPassword(new_password)
+
+
 
 
 

@@ -24,6 +24,7 @@ request_types = {
     "ListMuseumObjects" : "AllObjectsRequest",
     "GetMuseumObject" : "GetMuseumObjectRequest",
     "ListIndividuals" : "AllIndividualsRequest",
+    "ChangePassword" : "ChangePasswordRequest",
     "GetBiologicalIndividual" : "GetBioIndividualRequest"
     }
 
@@ -129,6 +130,24 @@ class GetBioIndividualRequest(HSRRequest):
     except AttributeError:
       response = "<response></response>"
     return (response, self.credentials.getResponse())
+
+class ChangePasswordRequest(HSRRequest):
+  def __init__(self, args, credentials, hsr_db):
+    self.credentials = credentials
+    self.new_password = args["new_password"]
+
+  def getRequestType(self):
+    return "ChangePassword"
+
+  def execute(self):
+    uid = self.credentials.getUserId()
+    user = self.credentials.auth_db.getUserById(uid)
+
+    user.UpdatePassword(self.new_password)
+    self.credentials.auth_db.writeUser(user)
+
+    return ("", self.credentials.getResponse())
+
 
 
 
