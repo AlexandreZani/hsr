@@ -33,7 +33,7 @@ class HsrHandler(object):
      response = request.execute()
      ret += response[0]
      ret += response[1]
-    except HSRException, (instance):
+    except Exception, (instance):
       ret += "<error>" + str(instance) + "</error>"
 
     ret += "</HSR>"
