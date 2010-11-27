@@ -25,27 +25,30 @@ function HsrApi(dispatcher) {
   this.dispatcher = dispatcher;
 
   this.masterCallback = function(xhr, msg) {
-    // Split reply into response, credentials and error if any
     var xml_doc = xhr.responseXML;
-
-    try {
-      var response = xml_doc.getElementsByTagName("response")[0];
-    } catch(ex) {
-      response = null;
+    if(xml_doc == null || xml_doc == undefined) {
+      var parser = new DOMParser();
+      xml_doc = parser.parseFromString(xhr.responseText, "text/xml");
     }
 
+    var response = null;
     try {
-      var credentials = xml_doc.getElementsByTagName("credentials")[0];
-      setCookie("credentials", (new XMLSerializer()).serializeToString(credentials), 1);
-    } catch(ex) {
-      credentials = null;
-    }
+      response = xml_doc.getElementsByTagName("response")[0];
+    } catch(ex) {}
 
+    var credentials = null;
     try {
-      var error = xml_doc.getElementsByTagName("error")[0];
-    } catch(ex) {
-      error = null;
-    }
+      credentials = xml_doc.getElementsByTagName("credentials")[0];
+      xml_creds = (new XMLSerializer()).serializeToString(credentials);
+
+      if(xml_creds != "")
+        setCookie("credentials", xml_creds, 1);
+    } catch(ex) {}
+
+    var error = null;
+    try {
+      error = xml_doc.getElementsByTagName("error")[0];
+    } catch(ex) {}
 
     if(typeof(msg.outer_callback) == "function")
       msg.outer_callback(response, credentials, error, msg);
@@ -73,11 +76,19 @@ function HsrApi(dispatcher) {
     args["new_password"] = new_password;
 
     var request = getRequest("ChangePassword", args);
-
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
 
     var msg = new Message(msg_xml, this.masterCallback);
     msg.type = "ChangePassword";
+    msg.outer_callback = callback;
+    this.dispatcher.sendMessage(msg);
+  }
+
+  this.getMuseumObjects = function(callback) {
+    var request = getRequest("ListMuseumObjects", new Array());
+    var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
+    var msg = new Message(msg_xml, this.masterCallback);
+    msg.type = "ListMuseumObjects";
     msg.outer_callback = callback;
     this.dispatcher.sendMessage(msg);
   }

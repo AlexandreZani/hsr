@@ -22,6 +22,7 @@ function getRequest(method, args) {
   var request_types = new Array();
   request_types["Ping"] = PingRequest;
   request_types["ChangePassword"] = ChangePasswordRequest;
+  request_types["ListMuseumObjects"] = AllObjectsRequest;
 
   return new request_types[method](args);
 }
@@ -49,7 +50,13 @@ function PingRequest(args) {
   }
 }
 
-/*
- *
-*/
+function AllObjectsRequest(args) {
+  this.getRequestType = function() {
+    return "ListMuseumObjects"
+  }
+
+  this.toXml = function() {
+    return "<request><type>ListMuseumObjects</type></request>";
+  }
+}
 

@@ -16,13 +16,15 @@
 
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="static/css/museum_objects.css" />
     <script type="text/javascript" src="/static/js/hsr_api.js"></script>
+    <script type="text/javascript" src="/static/js/museum_objects.js"></script>
   </head>
-  <body>
-    <h1>Main Menu</h1>
-    <ul>
-      <li><a href="/static/museum_objects.html">Museum Objects</a></li>
-      <li><a href="/static/bio_individuals.html">Biological Individuals</a></li>
-    </ul>
+  <body onload="getAllMuseumObjects()">
+    <h1>Museum Objects</h1>
+    <div id="museum_objects_div">
+      <table id="museum_objects_table">
+      </table>
+    </div>
   </body>
 </html>
