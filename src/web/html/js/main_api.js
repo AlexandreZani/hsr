@@ -92,4 +92,15 @@ function HsrApi(dispatcher) {
     msg.outer_callback = callback;
     this.dispatcher.sendMessage(msg);
   }
+
+  this.getMuseumObject = function(id, callback) {
+    var args = new Array();
+    args["object_id"] = id;
+    var request = getRequest("GetMuseumObject", args);
+    var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
+    var msg = new Message(msg_xml, this.masterCallback);
+    msg.type = "ListMuseumObjects";
+    msg.outer_callback = callback;
+    this.dispatcher.sendMessage(msg);
+  }
 }

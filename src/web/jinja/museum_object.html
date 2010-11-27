@@ -16,15 +16,14 @@
 
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/static/css/museum_objects.css" />
     <script type="text/javascript" src="/static/js/hsr_api.js"></script>
-    <script type="text/javascript" src="/static/js/museum_objects.js"></script>
+    <script type="text/javascript" src="/static/js/museum_object.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/museum_object.css" />
   </head>
-  <body onload="getAllMuseumObjects()">
-    <h1>Museum Objects</h1>
-    <div id="museum_objects_div">
-      <table id="museum_objects_table">
-      </table>
-    </div>
+  <body onload="onPageLoad({{ object_id }})">
+    <h1>Museum Object</h1>
+    <table id="museum_object">
+    </table>
+    <input type="button" value="Back" onclick="window.location='/static/museum_objects.html'" />
   </body>
 </html>

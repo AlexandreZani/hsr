@@ -23,6 +23,7 @@ function getRequest(method, args) {
   request_types["Ping"] = PingRequest;
   request_types["ChangePassword"] = ChangePasswordRequest;
   request_types["ListMuseumObjects"] = AllObjectsRequest;
+  request_types["GetMuseumObject"] = GetMuseumObjectRequest;
 
   return new request_types[method](args);
 }
@@ -57,6 +58,18 @@ function AllObjectsRequest(args) {
 
   this.toXml = function() {
     return "<request><type>ListMuseumObjects</type></request>";
+  }
+}
+
+function GetMuseumObjectRequest(args) {
+  this.object_id = args["object_id"];
+
+  this.getRequestType = function() {
+    return "GetMuseumObject";
+  }
+
+  this.toXml = function() {
+    return "<request><type>GetMuseumObject</type><args><object_id>"+ this.object_id +"</object_id></args></request>";
   }
 }
 

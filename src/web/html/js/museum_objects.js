@@ -43,6 +43,6 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
 }
 
 function onRowClick(id) {
-  alert("object_id: " + id);
+  window.location = "/jinja/museum_object.html?object_id=" + id;
 }
 

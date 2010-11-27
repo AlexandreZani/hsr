@@ -12,6 +12,7 @@ import ConfigParser
 import sys, os
 from urllib2 import unquote
 import string
+from jinja2 import Environment, FileSystemLoader
 
 config_file = "/etc/hsr/hsr.conf"
 html_path = "../html/"
@@ -41,6 +42,8 @@ class Application(object):
 
     self.handler = HsrHandler(self.hsr_db, self.auth_db)
 
+    self.template_env = Environment(loader=FileSystemLoader(html_path + "../jinja/"))
+
     try:
       self.auth_db.createUser('admin', 'admin')
     except Exception:
@@ -54,6 +57,8 @@ class Application(object):
       return self.api(environ, start_response)
     elif environ['PATH_INFO'][0:7] == "/static":
       return self.static(environ, start_response)
+    elif environ['PATH_INFO'][0:6] == "/jinja":
+      return self.jinja(environ, start_response)
     else:
       return self.error(environ, start_response)
 
@@ -61,8 +66,37 @@ class Application(object):
       start_response('404 Not Found', [('Content-type','text/html')])
       return ['Not found']
 
-  def static(self, environ, start_response):
-    filename = environ['PATH_INFO'][8:]
+  def jinja(self, environ, start_response):
+    filename = environ['PATH_INFO'][6:]
+
+    try:
+      if environ['HTTP_COOKIE'][:12] != "credentials=":
+        raise Exception()
+      value = unquote(environ['HTTP_COOKIE'][12:])
+      eov = string.find(value, ";")
+      if eov > 0:
+        value = value[:eov]
+
+      (cred_type, cred_args) = self.handler.parseMethod(parseString(value))
+      creds = getHSRCredentials(cred_type, cred_args, None, self.auth_db)
+      creds.getUserId()
+    except Exception, (instance):
+      return self.static(environ, start_response, "login.html")
+
+    if not os.path.exists(html_path + "../jinja/" + filename):
+      return self.error(environ, start_response)
+
+    template = self.template_env.get_template(filename)
+    d = parse_qs(environ['QUERY_STRING'])
+    for k in d:
+      d[k] = d[k][0]
+
+    start_response('200 OK', [('Content-type','text/html')])
+    return [str(template.render(d))]
+
+  def static(self, environ, start_response, filename=None):
+    if filename == None:
+      filename = environ['PATH_INFO'][8:]
 
     if filename == "":
       filename = "main.html"
@@ -72,7 +106,6 @@ class Application(object):
         if environ['HTTP_COOKIE'][:12] != "credentials=":
           raise Exception()
         value = unquote(environ['HTTP_COOKIE'][12:])
-        print value
         eov = string.find(value, ";")
         if eov > 0:
           value = value[:eov]
@@ -98,10 +131,10 @@ class Application(object):
       request_body_size = 0
 
     request_body = environ['wsgi.input'].read(request_body_size)
+    print request_body
 
     start_response('200 OK', [('Content-type','text/xml')])
     response = self.handler.execute(request_body)
-    print response
     parseString(response)
     xml_header = "<?xml version='1.0' encoding='UTF-8'?>"
     return [xml_header, response]
