@@ -32,7 +32,7 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
 
     var oid = node.getElementsByTagName("object_id")[0].firstChild.nodeValue;
 
-    var row = "<tr class='" + class + "' ondblclick='onRowClick(" + oid  + ")'>";
+    var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(" + oid  + ")' onmouseover='onRowMouseOver(" + oid + ")' onmouseout='onRowMouseOut("+ oid +")'>";
     row += "<td>" + node.getElementsByTagName("object_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("site")[0].firstChild.nodeValue + "</td>";
@@ -40,6 +40,14 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
     table_innerHTML += row;
   }
   table.innerHTML = table_innerHTML;
+}
+
+function onRowMouseOver(oid) {
+  document.getElementById("row"+oid).setAttribute("style", "background-color:#CAF3F2");
+}
+
+function onRowMouseOut(oid) {
+  document.getElementById("row"+oid).setAttribute("style", "");
 }
 
 function onRowClick(id) {
