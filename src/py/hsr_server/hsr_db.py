@@ -80,7 +80,7 @@ class MuseumObject(object):
 
   def toXml(self):
     xml = "<museum_object>"
-    xml += "<object_id>" + str(self.object_id) + "<object_id>"
+    xml += "<object_id>" + str(self.object_id) + "</object_id>"
     xml += "<object_number>" + str(self.object_num) + "</object_number>"
     xml += "<catalogue_number>" + str(self.catalogue_num) + "</catalogue_number>"
     xml += "<site>" + str(self.site) + "</site>"
