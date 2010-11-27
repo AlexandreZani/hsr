@@ -66,7 +66,7 @@ class Application(object):
     if filename == "":
       filename = "main.html"
 
-    if filename != "login.html" and filename[-5:] == ".html":
+    if filename != "main.html" and filename != "login.html" and filename[-5:] == ".html":
       try:
         if environ['HTTP_COOKIE'][:12] != "credentials=":
           raise Exception()
