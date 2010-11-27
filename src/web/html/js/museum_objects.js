@@ -21,11 +21,18 @@ function getAllMuseumObjects() {
 
 function getMuseumObjectsCallback(response, credentials, error, msg) {
   var table = document.getElementById("museum_objects_table");
+  var class = "odd_row";
   table_innerHTML = "<tr><th>Object Number</th><th>Catalogue Number</th><th>Site</th></tr>";
   for(var i = 0; i < response.childNodes.length; i++) {
     var node = response.childNodes.item(i);
+    if(class == "odd_row")
+      class = "";
+    else
+      class = "odd_row";
 
-    var row = "<tr>";
+    var oid = node.getElementsByTagName("object_id")[0].firstChild.nodeValue;
+
+    var row = "<tr class='" + class + "' ondblclick='onRowClick(" + oid  + ")'>";
     row += "<td>" + node.getElementsByTagName("object_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("site")[0].firstChild.nodeValue + "</td>";
@@ -34,3 +41,8 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
   }
   table.innerHTML = table_innerHTML;
 }
+
+function onRowClick(id) {
+  alert("object_id: " + id);
+}
+
