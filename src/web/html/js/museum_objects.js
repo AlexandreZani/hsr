@@ -30,9 +30,9 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
     else
       class = "odd_row";
 
-    var oid = node.getElementsByTagName("object_id")[0].firstChild.nodeValue;
+    var oid = node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue;
 
-    var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(" + oid  + ")' onmouseover='onRowMouseOver(" + oid + ")' onmouseout='onRowMouseOut("+ oid +")'>";
+    var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(\"" + oid  + "\")' onmouseover='onRowMouseOver(\"" + oid + "\")' onmouseout='onRowMouseOut(\""+ oid +"\")'>";
     row += "<td>" + node.getElementsByTagName("object_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue + "</td>";
     row += "<td>" + node.getElementsByTagName("site")[0].firstChild.nodeValue + "</td>";
@@ -51,6 +51,6 @@ function onRowMouseOut(oid) {
 }
 
 function onRowClick(id) {
-  window.location = "/jinja/museum_object.html?object_id=" + id;
+  window.location = "/jinja/museum_object.html?catalogue_num=" + id;
 }
 

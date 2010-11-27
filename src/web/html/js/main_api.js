@@ -95,7 +95,7 @@ function HsrApi(dispatcher) {
 
   this.getMuseumObject = function(id, callback) {
     var args = new Array();
-    args["object_id"] = id;
+    args["catalogue_num"] = id;
     var request = getRequest("GetMuseumObject", args);
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
     var msg = new Message(msg_xml, this.masterCallback);

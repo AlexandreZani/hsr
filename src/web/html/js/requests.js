@@ -62,14 +62,22 @@ function AllObjectsRequest(args) {
 }
 
 function GetMuseumObjectRequest(args) {
-  this.object_id = args["object_id"];
+  this.args = args;
 
   this.getRequestType = function() {
     return "GetMuseumObject";
   }
 
   this.toXml = function() {
-    return "<request><type>GetMuseumObject</type><args><object_id>"+ this.object_id +"</object_id></args></request>";
+    var ret = "<request><type>GetMuseumObject</type><args>";
+
+    for(var key in this.args) {
+      ret += "<" + key + ">" + this.args[key] + "</" + key + ">";
+    }
+
+    ret += "</args></request>";
+
+    return ret;
   }
 }
 
