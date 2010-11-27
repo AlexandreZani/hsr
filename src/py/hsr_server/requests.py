@@ -80,13 +80,21 @@ class GetMuseumObjectRequest(HSRRequest):
     except KeyError:
       self.object_id = None
 
+    try:
+      self.catalogue_num = args["catalogue_num"]
+    except KeyError:
+      self.catalogue_num = None
+
   def getRequestType(self):
     return "GetMuseumObject"
 
   def execute(self):
     self.credentials.getUserId()
     cred_response = self.credentials.getResponse()
-    mo = self.hsr_db.getMuseumObjectById(self.object_id)
+    if self.object_id != None:
+      mo = self.hsr_db.getMuseumObjectById(self.object_id)
+    else:
+      mo = self.hsr_db.getMuseumObjectByCatalogueNum(self.catalogue_num)
     try:
       mo_xml = "<response>" + mo.toXml() + "</response>"
     except AttributeError:

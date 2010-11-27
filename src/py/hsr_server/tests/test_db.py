@@ -77,6 +77,14 @@ class TestDB:
     mo = db.getMuseumObjectById(nmo.object_id)
     assert nmo == mo
 
+  def test_getMuseumObjectByCatalogueNum(self, db):
+    catalogue_num = 2
+    object_num = 3
+    site = "berkeley"
+    nmo = db.newMuseumObject(catalogue_num, object_num, site)
+    mo = db.getMuseumObjectByCatalogueNum(nmo.catalogue_num)
+    assert nmo == mo
+
   def test_getMuseumObjectByIdNone(self, db):
     catalogue_num = 2
     object_num = 3

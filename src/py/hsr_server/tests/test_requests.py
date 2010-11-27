@@ -97,6 +97,18 @@ class TestGetMuseumObjectRequest(HSRRequest):
 
     assert mo.toXml() in response[0]
     
+  def test_GetMuseumObjectRequestByCatalogueNum(self):
+    db = HSRDBTestImpl()
+    mo = db.newMuseumObject("hello", "hi", "berkeley")
+    args = {"catalogue_num" : mo.catalogue_num}
+    credentials = MockCredentials(True)
+
+    request = getHSRRequest("GetMuseumObject", args, credentials, db)
+
+    response = request.execute()
+
+    assert mo.toXml() in response[0]
+
   def test_GetMuseumObjectRequestBadCreds(self):
     db = HSRDBTestImpl()
     mo = db.newMuseumObject("hello", "hi", "berkeley")

@@ -35,6 +35,12 @@ class HSRDBTestImpl(HSRDB):
         return mo.copy()
     return None
 
+  def getMuseumObjectByCatalogueNum(self, catalogue_num):
+    for mo in self.museum_objects:
+      if mo.catalogue_num == catalogue_num:
+        return mo.copy()
+    return None
+
   def getAllMuseumObjects(self):
     mos = []
     for mo in self.museum_objects:

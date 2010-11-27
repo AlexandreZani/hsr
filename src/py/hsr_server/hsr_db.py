@@ -196,6 +196,7 @@ class HSRDBException(Exception):
 
 class HSRDB:
   def getMuseumObjectById(self, object_id): abstract()
+  def getMuseumObjectByCatalogueNum(self, catalogue_num): abstract()
   def newMuseumObject(self, catalogue_num, object_num, site): abstract()
   def writeMuseumObject(self, museum_object): abstract()
   def getAllMuseumObjects(self): abstract()
@@ -245,6 +246,21 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
     stmt = mos.select().where(mos.c.ObjectID==object_id)
+    result = conn.execute(stmt)
+    row = result.fetchone()
+    conn.close()
+
+    if not row:
+      return None
+
+    return MuseumObject(row.ObjectID, row.CatalogueID,
+        row.ObjectNumber, row.Site)
+
+  def getMuseumObjectByCatalogueNum(self, catalogue_num):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    mos = Table('Objects', metadata, autoload=True)
+    stmt = mos.select().where(mos.c.CatalogueID==catalogue_num)
     result = conn.execute(stmt)
     row = result.fetchone()
     conn.close()
