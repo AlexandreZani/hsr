@@ -11,6 +11,7 @@ from xml.dom.minidom import parseString
 import ConfigParser
 import sys, os
 from urllib2 import unquote
+import string
 
 config_file = "/etc/hsr/hsr.conf"
 html_path = "../html/"
@@ -70,7 +71,13 @@ class Application(object):
       try:
         if environ['HTTP_COOKIE'][:12] != "credentials=":
           raise Exception()
-        (cred_type, cred_args) = self.handler.parseMethod(parseString(unquote(environ['HTTP_COOKIE'][12:])))
+        value = unquote(environ['HTTP_COOKIE'][12:])
+        print value
+        eov = string.find(value, ";")
+        if eov > 0:
+          value = value[:eov]
+
+        (cred_type, cred_args) = self.handler.parseMethod(parseString(value))
         creds = getHSRCredentials(cred_type, cred_args, None, self.auth_db)
         creds.getUserId()
       except Exception, (instance):
@@ -91,10 +98,13 @@ class Application(object):
       request_body_size = 0
 
     request_body = environ['wsgi.input'].read(request_body_size)
-    print request_body
 
     start_response('200 OK', [('Content-type','text/xml')])
-    return [self.handler.execute(request_body)]
+    response = self.handler.execute(request_body)
+    print response
+    parseString(response)
+    xml_header = "<?xml version='1.0' encoding='UTF-8'?>"
+    return [xml_header, response]
 
 if __name__ == "__main__":
   root_path = os.path.dirname(sys.argv[0])

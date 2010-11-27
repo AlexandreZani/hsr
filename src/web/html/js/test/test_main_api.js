@@ -57,7 +57,7 @@ function TestHsrApi() {
     args["password"] = "test";
     
     var credentials = getCredentials("UsernamePassword", args);
-    assertEquals("<msg>" + credentials.toXml() + ping.toXml() + "</msg>", xhr.rcvd);
+    assertEquals("<HSR>" + credentials.toXml() + ping.toXml() + "</HSR>", xhr.rcvd);
   }
 }
 

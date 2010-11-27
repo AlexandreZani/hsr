@@ -1,7 +1,7 @@
 function onLoginButtonClick() {
   var username = document.getElementById("username").value;
   var password = document.getElementById("password").value;
-  api = getHsrApi();
+  var api = getHsrApi();
   api.login(username, password, loginCallback);
 }
 
