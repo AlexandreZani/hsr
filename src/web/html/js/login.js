@@ -7,9 +7,10 @@ function onLoginButtonClick() {
 
 function loginCallback(response, credentials, error, msg) {
   if(credentials != null) {
-    var exdate=new Date();
-    exdate.setDate(exdate.getDate()+1);
-    document.cookie="credentials="+(new XMLSerializer()).serializeToString(credentials)+";expires="+exdate.toUTCString();
+    if(window.location.pathname == "/static/login.html")
+      window.location = "/static/main.html";
+
+    window.location.reload();
   } else {
     document.getElementById("invalid_login").setAttribute("style", "");
   }
