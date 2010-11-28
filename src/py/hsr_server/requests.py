@@ -127,12 +127,20 @@ class GetBioIndividualRequest(HSRRequest):
     except KeyError:
       self.indiv_id = None
 
+    try:
+      self.suffix_design = args["suffix_design"]
+    except KeyError:
+      self.suffix_design = None
+
   def getRequestType(self):
     return "GetBiologicalIndividual"
 
   def execute(self):
     self.credentials.getUserId()
-    bi = self.hsr_db.getIndividualById(self.indiv_id)
+    if self.indiv_id != None:
+      bi = self.hsr_db.getIndividualById(self.indiv_id)
+    else:
+      bi = self.hsr_db.getIndividualBySuffixDesign(self.suffix_design)
     try:
       response = "<response>" + bi.toXml() + "</response>"
     except AttributeError:

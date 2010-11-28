@@ -82,6 +82,12 @@ class HSRDBTestImpl(HSRDB):
         return bi.copy()
     return None
 
+  def getIndividualBySuffixDesign(self, suffix_design):
+    for bi in self.indivs:
+      if bi.suffix_design== suffix_design:
+        return bi.copy()
+    return None
+
   def writeIndividual(self, indiv):
     for bi in self.indivs:
       if bi.indiv_id == indiv.indiv_id:

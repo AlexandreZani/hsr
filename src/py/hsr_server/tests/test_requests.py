@@ -189,6 +189,17 @@ class TestGetIndividualRequest:
 
     assert request.execute()[0] == "<response>" + bi.toXml() + "</response>"
 
+  def test_GetIndividualRequestBySuffixDesign(self):
+    db = HSRDBTestImpl()
+    bi = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+
+    args = {"suffix_design" : bi.suffix_design}
+    credentials = MockCredentials(True)
+
+    request = getHSRRequest("GetBiologicalIndividual", args, credentials, db)
+
+    assert request.execute()[0] == "<response>" + bi.toXml() + "</response>"
+
   def test_GetIndividualRequestNone(self):
     db = HSRDBTestImpl()
     bi = db.newIndividual("a", "a1", 10, 30, "NA", 1)

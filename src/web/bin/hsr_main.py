@@ -135,8 +135,8 @@ class Application(object):
 
     start_response('200 OK', [('Content-type','text/xml')])
     response = self.handler.execute(request_body)
-    parseString(response)
     xml_header = "<?xml version='1.0' encoding='UTF-8'?>"
+
     return [xml_header, response]
 
 if __name__ == "__main__":

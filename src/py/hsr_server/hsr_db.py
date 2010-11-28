@@ -202,6 +202,7 @@ class HSRDB:
   def getAllMuseumObjects(self): abstract()
   def writeIndividual(self, invidividual): abstract()
   def getIndividualById(self, indiv_id): abstract()
+  def getIndividualBySuffixDesign(self, indiv_id): abstract()
   def getAllIndividuals(self): abstract()
   def newIndividual(self, suffix, suffix_design, min_age, max_age, sex, museum_object): abstract()
   def deleteIndividual(self, indiv_id): abstract()
@@ -328,6 +329,25 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
     stmt = indivs.select().where(indivs.c.IndividualID==indiv_id)
+    row = conn.execute(stmt).fetchone()
+    conn.close()
+
+    if not row:
+      return None
+    return BioIndividual(
+        row.IndividualID,
+        row.Suffix,
+        row.SuffixDesignation,
+        row.AgeMin,
+        row.AgeMax,
+        row.Sex,
+        row.CatalogueID)
+
+  def getIndividualBySuffixDesign(self, suffix_design):
+    conn = self.getConn()
+    metadata = MetaData(conn)
+    indivs = Table('Individuals', metadata, autoload=True)
+    stmt = indivs.select().where(indivs.c.SuffixDesignation==suffix_design)
     row = conn.execute(stmt).fetchone()
     conn.close()
 

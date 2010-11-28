@@ -24,6 +24,8 @@ function getRequest(method, args) {
   request_types["ChangePassword"] = ChangePasswordRequest;
   request_types["ListMuseumObjects"] = AllObjectsRequest;
   request_types["GetMuseumObject"] = GetMuseumObjectRequest;
+  request_types["ListIndividuals"] = AllIndividualsRequest;
+  request_types["GetBiologicalIndividual"] = GetBioIndividualRequest;
 
   return new request_types[method](args);
 }
@@ -81,3 +83,32 @@ function GetMuseumObjectRequest(args) {
   }
 }
 
+function AllIndividualsRequest(args) {
+  this.getRequestType = function() {
+    return "ListIndividuals";
+  }
+
+  this.toXml = function() {
+    return "<request><type>"+ this.getRequestType() +"</type></request>";
+  }
+}
+
+function GetBioIndividualRequest(args) {
+  this.args = args;
+
+  this.getRequestType = function() {
+    return "GetBiologicalIndividual";
+  }
+
+  this.toXml = function() {
+    var ret = "<request><type>" + this.getRequestType() + "</type><args>";
+
+    for(var key in this.args) {
+      ret += "<" + key + ">" + this.args[key] + "</" + key + ">";
+    }
+
+    ret += "</args></request>";
+
+    return ret;
+  }
+}

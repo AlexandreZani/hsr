@@ -142,6 +142,18 @@ class TestDB:
     bi = db.getIndividualById(nbi.indiv_id)
     assert nbi == bi
 
+  def test_getIndividualBySuffixDesign(self, db):
+    suffix = "a"
+    suffix_design = "b"
+    min_age = 10
+    max_age = 20
+    mo = 1
+    sex = BioIndividual.NA
+    nbi = db.newIndividual(suffix, suffix_design, min_age, max_age,
+        sex, mo)
+    bi = db.getIndividualBySuffixDesign(nbi.suffix_design)
+    assert nbi == bi
+
   def test_getIndividualByIdNone(self, db):
     suffix = "a"
     suffix_design = "b"

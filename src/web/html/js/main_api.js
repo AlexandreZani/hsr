@@ -93,13 +93,33 @@ function HsrApi(dispatcher) {
     this.dispatcher.sendMessage(msg);
   }
 
+  this.getBioIndividuals = function(callback) {
+    var request = getRequest("ListIndividuals", new Array());
+    var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
+    var msg = new Message(msg_xml, this.masterCallback);
+    msg.type = "ListIndividuals";
+    msg.outer_callback = callback;
+    this.dispatcher.sendMessage(msg);
+  }
+
   this.getMuseumObject = function(id, callback) {
     var args = new Array();
     args["catalogue_num"] = id;
     var request = getRequest("GetMuseumObject", args);
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
     var msg = new Message(msg_xml, this.masterCallback);
-    msg.type = "ListMuseumObjects";
+    msg.type = "GetMuseumObject";
+    msg.outer_callback = callback;
+    this.dispatcher.sendMessage(msg);
+  }
+
+  this.getBioIndividual = function(suffix_design, callback) {
+    var args = new Array();
+    args["suffix_design"] = suffix_design;
+    var request = getRequest("GetBiologicalIndividual", args);
+    var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
+    var msg = new Message(msg_xml, this.masterCallback);
+    msg.type = "GetBiologicalIndividual";
     msg.outer_callback = callback;
     this.dispatcher.sendMessage(msg);
   }
