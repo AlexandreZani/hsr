@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from wsgiref import simple_server
 from hsr_server.hsr_db import HSRDBSqlAlchemyImpl
 from hsr_auth.auth_db import HSRAuthDBSqlAlchemyImpl
 from hsr_server.handler import HsrHandler
@@ -9,18 +8,25 @@ from sqlalchemy import *
 from cgi import parse_qs, escape
 from xml.dom.minidom import parseString
 import ConfigParser
-import sys, os
+import os
 from urllib2 import unquote
 import string
 from jinja2 import Environment, FileSystemLoader
 
-config_file = "/etc/hsr/hsr.conf"
-html_path = "../html/"
-
 class Application(object):
-  def __init__(self):
+  def __init__(self, config_file=None, html_path=None):
+    if config_file == None:
+      self.config_file = "/etc/hsr/hsr.conf"
+    else:
+      self.config_file = config_file
+
+    if html_path == None:
+      self.html_path = "../html/"
+    else:
+      self.html_path = html_path
+
     config = ConfigParser.RawConfigParser()
-    config.readfp(open(config_file))
+    config.readfp(open(self.config_file))
   
     hsr_db_url = config.get("hsr_db", "type") + "://"
     hsr_db_url += config.get("hsr_db", "username")
@@ -42,7 +48,7 @@ class Application(object):
 
     self.handler = HsrHandler(self.hsr_db, self.auth_db)
 
-    self.template_env = Environment(loader=FileSystemLoader(html_path + "../jinja/"))
+    self.template_env = Environment(loader=FileSystemLoader(self.html_path + "../jinja/"))
 
     try:
       self.auth_db.createUser('admin', 'admin')
@@ -83,7 +89,7 @@ class Application(object):
     except Exception, (instance):
       return self.static(environ, start_response, "login.html")
 
-    if not os.path.exists(html_path + "../jinja/" + filename):
+    if not os.path.exists(self.html_path + "../jinja/" + filename):
       return self.error(environ, start_response)
 
     template = self.template_env.get_template(filename)
@@ -117,7 +123,7 @@ class Application(object):
         filename = "login.html"
 
     try:
-      f = open(html_path + filename, "r")
+      f = open(self.html_path + filename, "r")
     except IOError:
       return self.error(environ, start_response)
 
@@ -131,24 +137,9 @@ class Application(object):
       request_body_size = 0
 
     request_body = environ['wsgi.input'].read(request_body_size)
-    print request_body
 
     start_response('200 OK', [('Content-type','text/xml')])
     response = self.handler.execute(request_body)
     xml_header = "<?xml version='1.0' encoding='UTF-8'?>"
 
     return [xml_header, response]
-
-if __name__ == "__main__":
-  root_path = os.path.dirname(sys.argv[0])
-
-  if root_path != "":
-    config_file = root_path + "/../conf/hsr.conf"
-    html_path = root_path + "/" + html_path
-  else:
-    config_file = "../conf/hsr.conf"
-
-  app = Application()
-  httpd = simple_server.WSGIServer(('localhost', 8000), simple_server.WSGIRequestHandler,)
-  httpd.set_app(app)
-  httpd.serve_forever()
