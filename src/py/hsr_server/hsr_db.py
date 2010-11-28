@@ -15,6 +15,7 @@
 #   limitations under the License.
 
 from sqlalchemy import *
+from xml.sax.saxutils import escape
 
 def abstract():
   import inspect
@@ -80,10 +81,10 @@ class MuseumObject(object):
 
   def toXml(self):
     xml = "<museum_object>"
-    xml += "<object_id>" + str(self.object_id) + "</object_id>"
-    xml += "<object_number>" + str(self.object_num) + "</object_number>"
-    xml += "<catalogue_number>" + str(self.catalogue_num) + "</catalogue_number>"
-    xml += "<site>" + str(self.site) + "</site>"
+    xml += "<object_id>" + escape(str(self.object_id)) + "</object_id>"
+    xml += "<object_number>" + escape(str(self.object_num)) + "</object_number>"
+    xml += "<catalogue_number>" + escape(str(self.catalogue_num)) + "</catalogue_number>"
+    xml += "<site>" + escape(str(self.site)) + "</site>"
     xml += "</museum_object>"
     return xml
 
@@ -169,10 +170,10 @@ class BioIndividual(object):
 
   def toXml(self):
     xml = "<bio_individual>"
-    xml += "<suffix>" + str(self.suffix) + "</suffix>"
-    xml += "<suffix_design>" + str(self.suffix_design) + "</suffix_design>"
-    xml += "<min_age>" + str(self.min_age) + "</min_age>"
-    xml += "<max_age>" + str(self.max_age) + "</max_age>"
+    xml += "<suffix>" + escape(str(self.suffix)) + "</suffix>"
+    xml += "<suffix_design>" + escape(str(self.suffix_design)) + "</suffix_design>"
+    xml += "<min_age>" + escape(str(self.min_age)) + "</min_age>"
+    xml += "<max_age>" + escape(str(self.max_age)) + "</max_age>"
 
     xml += "<sex>"
     if self.sex == self.NA:
@@ -183,7 +184,7 @@ class BioIndividual(object):
       xml += "Female"
     xml += "</sex>"
 
-    xml += "<museum_object_id>" + str(self.museum_object) + "</museum_object_id>"
+    xml += "<museum_object_id>" + escape(str(self.museum_object)) + "</museum_object_id>"
 
     xml += "</bio_individual>"
 
