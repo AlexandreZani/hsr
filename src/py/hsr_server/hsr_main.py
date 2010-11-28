@@ -14,16 +14,9 @@ import string
 from jinja2 import Environment, FileSystemLoader
 
 class Application(object):
-  def __init__(self, config_file=None, html_path=None):
-    if config_file == None:
-      self.config_file = "/etc/hsr/hsr.conf"
-    else:
-      self.config_file = config_file
-
-    if html_path == None:
-      self.html_path = "../html/"
-    else:
-      self.html_path = html_path
+  def __init__(self, config_file, html_path):
+    self.config_file = config_file
+    self.html_path = html_path
 
     config = ConfigParser.RawConfigParser()
     config.readfp(open(self.config_file))
