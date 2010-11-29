@@ -40,6 +40,7 @@ class HSRCredentials(object):
   def getUserId(self): abstract()
   def getResponse(self): abstract()
   def getCredentialsType(self): abstract()
+  def checkPermissions(self, permissions): abstract()
 
 class NoneCredentials(HSRCredentials):
   def __init__(self, args, ip, db):
@@ -53,6 +54,9 @@ class NoneCredentials(HSRCredentials):
 
   def getResponse(self):
     return ""
+
+  def checkPermissions(self, permissions):
+    raise HSRCredentialsException("InsufficientPermissions")
 
 class UsernamePasswordCredentials(HSRCredentials):
   def __init__(self, args, ip, auth_db):
@@ -85,6 +89,10 @@ class UsernamePasswordCredentials(HSRCredentials):
       raise HSRCredentialsException("InvalidCredentials")
 
     return self.user.user_id
+
+  def checkPermissions(self, permissions):
+    if not self.user.CheckPermissions(permissions):
+      raise HSRCredentialsException("InsufficientPermissions")
 
   def getResponse(self):
     return "<credentials><type>SessionId</type><args><session_id>" + self.session.session_id + "</session_id></args></credentials>"
@@ -123,3 +131,7 @@ class SessionIdCredentials(HSRCredentials):
 
   def getResponse(self):
     return ""
+
+  def checkPermissions(self, permissions):
+    if not self.user.CheckPermissions(permissions):
+      raise HSRCredentialsException("InsufficientPermissions")

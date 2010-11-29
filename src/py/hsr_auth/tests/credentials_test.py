@@ -15,6 +15,7 @@
 #   limitations under the License.
 
 from hsr_auth.credentials import getHSRCredentials, HSRCredentialsException
+from hsr_auth.auth_db import Permissions
 from hsr_auth.tests.HSRAuthDBTest import HSRAuthDBTestImpl, HSRAuthDBExcept
 
 class TestNoneCredentials:
@@ -28,6 +29,15 @@ class TestNoneCredentials:
       credentials.getUserId()
     except HSRCredentialsException, (ex):
       assert str(ex) == "InvalidCredentials"
+    else:
+      assert False
+
+  def test_CheckPermissions(self):
+    credentials = getHSRCredentials("None", {}, "127.0.0.1")
+    try:
+      credentials.checkPermissions(Permissions.NONE)
+    except HSRCredentialsException, (ex):
+      assert str(ex) == "InsufficientPermissions"
     else:
       assert False
 
@@ -134,6 +144,41 @@ class TestUsernamePasswordCredentials:
     session = db.getSessionById(credentials.session.session_id)
     assert session == credentials.session
 
+  def test_CheckPermissionsFail(self):
+    db = HSRAuthDBTestImpl()
+    username = "loki"
+    password = "key"
+    user = db.createUser(username, password, Permissions.WRITE)
+    args = {
+        "username" : username,
+        "password" : password
+        }
+    credentials = getHSRCredentials("UsernamePassword", args,
+        "127.0.0.1", db)
+    credentials.getUserId()
+
+    try:
+      credentials.checkPermissions(Permissions.ADMIN)
+    except HSRCredentialsException, (ex):
+      assert str(ex) == "InsufficientPermissions"
+    else:
+      assert False
+
+  def test_CheckPermissionsFail(self):
+    db = HSRAuthDBTestImpl()
+    username = "loki"
+    password = "key"
+    user = db.createUser(username, password, Permissions.WRITE)
+    args = {
+        "username" : username,
+        "password" : password
+        }
+    credentials = getHSRCredentials("UsernamePassword", args,
+        "127.0.0.1", db)
+    credentials.getUserId()
+
+    credentials.checkPermissions(Permissions.WRITE)
+
 class TestSessionIdCredentials:
   def test_Factory(self):
     args = {"session_id" : "abcdef"}
@@ -169,5 +214,21 @@ class TestSessionIdCredentials:
       credentials.getUserId()
     except HSRCredentialsException, (ex):
       assert str(ex) == "InvalidCredentials"
+    else:
+      assert False
+
+  def test_CheckPermissionsFails(self):
+    db = HSRAuthDBTestImpl()
+    username = "loki"
+    password = "key"
+    user = db.createUser(username, password)
+    session = db.newSession(user.user_id)
+    args = {"session_id" : session.session_id}
+    credentials = getHSRCredentials("SessionId", args, "127.0.0.1", db)
+
+    try:
+      credentials.checkPermissions(Permissions.ADMIN)
+    except HSRCredentialsException, (ex):
+      assert str(ex) == "InsufficientPermissions"
     else:
       assert False
