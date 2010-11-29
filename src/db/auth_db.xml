@@ -20,6 +20,7 @@
     <field name="Username" type="VARCHAR(255)" unique="true" indexed="true" />
     <field name="Salt" type="VARCHAR(255)" />
     <field name="PasswordHash" type="VARCHAR(255)" desc="sha1(Salt + User password)" />
+    <field name="Permissions" signed="false" type="TINYINT" />
   </table>
 
   <table name="Sessions">

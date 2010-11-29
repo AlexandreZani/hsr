@@ -26,12 +26,18 @@ def abstract():
   caller = inspect.getouterframes(inspect.currentframe())[1][3]
   raise NotImplementedError(caller + ' must be implemented in subclass')
 
+class Permissions(object):
+  NONE = 128
+  READ = 64
+  WRITE = 32
+  ADMIN = 0
+
 class User(object):
-  def __init__(self, user_id = None, username = None, password_hash =
-      None, salt = None):
+  def __init__(self, user_id = None, username = None, password_hash = None, salt = None, permissions = Permissions.READ):
     self.user_id = user_id
     self.username = str(username)
     self.salt = str(salt)
+    self.permissions = permissions
     if salt == None and password_hash != None:
       self.UpdatePassword(password_hash)
     else:
@@ -58,6 +64,9 @@ class User(object):
       return True
     else:
       return False
+
+  def CheckPermissions(self, needed_permissions):
+    return (self.permissions <= needed_permissions)
 
   def __eq__(self, right):
     try:
@@ -104,7 +113,7 @@ class HSRAuthDB:
 
   def writeUser(self, user): abstract()
 
-  def createUser(self, username, password): abstract()
+  def createUser(self, username, password, permissions=Permissions.READ): abstract()
 
   def deleteUser(self, used): abstract()
 
@@ -150,9 +159,9 @@ class HSRAuthDBMySqlImpl(HSRAuthDB):
 
   def writeUser(self, user):
     params = [user.username, user.password_hash, user.salt,
-        user.user_id]
+        user.permissions, user.user_id]
     sql = """UPDATE Users
-    SET Username=%s, PasswordHash=%s, Salt=%s
+    SET Username=%s, PasswordHash=%s, Salt=%s, Permissions=%s
     WHERE UserID=%s
     """
     cursor = self.db.cursor()
@@ -164,11 +173,12 @@ class HSRAuthDBMySqlImpl(HSRAuthDB):
     if cursor.rowcount < 1:
       raise HSRAuthDBExcept("Could not write User!")
 
-  def createUser(self, username, password):
-    user = User(0, username, password)
-    params = [user.username, user.salt, user.password_hash]
-    sql = """INSERT INTO Users(Username, Salt, PasswordHash)
-      VALUES (%s, %s, %s);"""
+  def createUser(self, username, password, permissions=Permissions.READ):
+    user = User(0, username, password, permissions=permissions)
+    params = [user.username, user.salt, user.password_hash,
+        user.permissions]
+    sql = """INSERT INTO Users(Username, Salt, PasswordHash, Permissions)
+      VALUES (%s, %s, %s, %s);"""
     
     cursor = self.db.cursor()
     try:
@@ -181,7 +191,7 @@ class HSRAuthDBMySqlImpl(HSRAuthDB):
 
   def getUserByName(self, username):
     params = [username]
-    sql = """SELECT UserID, Username, PasswordHash, Salt FROM Users
+    sql = """SELECT UserID, Username, PasswordHash, Salt, Permissions FROM Users
     WHERE Username=%s"""
     cursor = self.db.cursor()
     cursor.execute(sql, params)
@@ -189,7 +199,7 @@ class HSRAuthDBMySqlImpl(HSRAuthDB):
       result = cursor.fetchall()[0]
     except IndexError:
       return None
-    return User(result[0], result[1], result[2], result[3])
+    return User(result[0], result[1], result[2], result[3], result[4])
 
   def getUserById(self, uid):
     params = [uid]
@@ -258,14 +268,15 @@ class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
   def getConn(self):
     return self.db_engine.connect()
 
-  def createUser(self, username, password):
+  def createUser(self, username, password, permissions=Permissions.READ):
     conn = self.getConn()
     metadata = MetaData(conn)
     users = Table('Users', metadata, autoload=True)
 
-    user = User(0, username, password)
+    user = User(0, username, password, permissions=permissions)
     stmt = users.insert().values(Username=user.username,
-        Salt=user.salt, PasswordHash=user.password_hash)
+        Salt=user.salt, PasswordHash=user.password_hash,
+        Permissions=user.permissions)
     try:
       result = conn.execute(stmt)
     except Exception:
@@ -284,7 +295,8 @@ class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
     stmt = users.update().values(
         Username=user.username,
         Salt=user.salt,
-        PasswordHash=user.password_hash
+        PasswordHash=user.password_hash,
+        Permissions=user.permissions
         ).where(users.c.UserID==user.user_id)
     try:
       result = conn.execute(stmt)
@@ -310,7 +322,8 @@ class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
     if not row:
       return None
 
-    return User(row.UserID, row.Username, row.PasswordHash, row.Salt)
+    return User(row.UserID, row.Username, row.PasswordHash, row.Salt,
+        row.Permissions)
 
   def getUserById(self, uid):
     conn = self.getConn()

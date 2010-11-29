@@ -44,11 +44,11 @@ class HSRAuthDBTestImpl(HSRAuthDB):
 
     raise HSRAuthDBExcept("Could not write User!")
 
-  def createUser(self, username, password):
+  def createUser(self, username, password, permissions=Permissions.READ):
     for user in self.users:
       if user.username == username:
         raise HSRAuthDBExcept("Could not create User!")
-    user = User(self.user_id, username, password)
+    user = User(self.user_id, username, password, permissions=permissions)
     self.user_id += 1
     self.users.append(user)
     return user

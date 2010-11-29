@@ -31,6 +31,14 @@ class TestUser:
     user.UpdatePassword("Hello!")
     assert not user.CheckPassword("Hello!2")
 
+  def test_CheckPermission(self):
+    user = User()
+
+    assert user.CheckPermissions(Permissions.NONE)
+    assert user.CheckPermissions(Permissions.READ)
+    assert not user.CheckPermissions(Permissions.WRITE)
+    assert not user.CheckPermissions(Permissions.ADMIN)
+
 def pytest_generate_tests(metafunc):
   if 'db' in metafunc.funcargnames:
     metafunc.addcall(param=1)
@@ -56,13 +64,15 @@ def pytest_funcarg__db(request):
 
 class TestDB:
   def test_CreateUser(self, db):
-    user = db.createUser('armence', 'Hello!')
+    user = db.createUser('armence', 'Hello!', Permissions.ADMIN)
     user2 = db.getUserByName('armence')
 
     assert user.username == user2.username
     assert user.user_id == user2.user_id
     assert user.password_hash == user2.password_hash
     assert user.salt == user2.salt
+    assert user.permissions == user2.permissions
+    assert Permissions.ADMIN == user.permissions
     assert user == user2
 
   def test_GetUserById(self, db):
@@ -84,9 +94,11 @@ class TestDB:
     user = db.createUser('armence', 'Hello!')
     user.UpdatePassword('World!')
     user.username = 'loki'
+    user.permissions = Permissions.ADMIN
     db.writeUser(user)
     user2 = db.getUserByName('loki')
     assert user2.CheckPassword('World!')
+    assert user2.CheckPermissions(Permissions.ADMIN)
 
   def test_ChangeSameUsername(self, db):
     db.createUser('armence', 'Hello!')
