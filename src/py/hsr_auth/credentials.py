@@ -65,17 +65,24 @@ class UsernamePasswordCredentials(HSRCredentials):
     self.ip = ip
     self.auth_db = auth_db
 
+    if self.auth_db != None:
+      self.user = self.auth_db.getUserByName(self.username)
+      if self.user != None:
+        self.session = self.auth_db.newSession(self.user.user_id)
+      else:
+        self.session = None
+    else:
+      self.user = None
+      self.session = None
+
   def getCredentialsType(self):
     return "UsernamePassword"
 
   def getUserId(self):
-    self.user = self.auth_db.getUserByName(self.username)
     if self.user == None:
       raise HSRCredentialsException("InvalidCredentials")
     if not self.user.CheckPassword(self.password):
       raise HSRCredentialsException("InvalidCredentials")
-
-    self.session = self.auth_db.newSession(self.user.user_id)
 
     return self.user.user_id
 
@@ -92,11 +99,20 @@ class SessionIdCredentials(HSRCredentials):
     self.ip = ip
     self.auth_db=auth_db
 
+    if self.auth_db != None:
+      self.session = self.auth_db.getSessionById(self.session_id)
+      if self.session == None:
+        self.user = None
+      else:
+        self.user = self.auth_db.getUserById(self.session.user_id)
+    else:
+      self.session = None
+      self.user = None
+
   def getCredentialsType(self):
     return "SessionId"
 
   def getUserId(self):
-    self.session = self.auth_db.getSessionById(self.session_id)
     if self.session == None:
       raise HSRCredentialsException("InvalidCredentials")
     if (self.session.last_used - time.time()) > self.timeout:
