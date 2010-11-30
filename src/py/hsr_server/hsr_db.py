@@ -170,6 +170,7 @@ class BioIndividual(object):
 
   def toXml(self):
     xml = "<bio_individual>"
+    xml += "<individual_id>" + escape(str(self.indiv_id)) + "</individual_id>"
     xml += "<suffix>" + escape(str(self.suffix)) + "</suffix>"
     xml += "<suffix_design>" + escape(str(self.suffix_design)) + "</suffix_design>"
     xml += "<min_age>" + escape(str(self.min_age)) + "</min_age>"

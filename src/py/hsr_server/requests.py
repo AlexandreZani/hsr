@@ -134,7 +134,7 @@ class GetBioIndividualRequest(HSRRequest):
     self.credentials = credentials
     self.hsr_db = hsr_db
     try:
-      self.indiv_id = args["indiv_id"]
+      self.indiv_id = args["individual_id"]
     except KeyError:
       self.indiv_id = None
 

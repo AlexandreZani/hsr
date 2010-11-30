@@ -241,7 +241,7 @@ class TestGetIndividualRequest:
     db = HSRDBTestImpl()
     bi = db.newIndividual("a", "a1", 10, 30, "NA", 1)
 
-    args = {"indiv_id" : bi.indiv_id}
+    args = {"individual_id" : bi.indiv_id}
     credentials = MockCredentials(True)
 
     request = getHSRRequest("GetBiologicalIndividual", args, credentials, db)

@@ -113,9 +113,9 @@ function HsrApi(dispatcher) {
     this.dispatcher.sendMessage(msg);
   }
 
-  this.getBioIndividual = function(suffix_design, callback) {
+  this.getBioIndividual = function(indiv_id, callback) {
     var args = new Array();
-    args["suffix_design"] = suffix_design;
+    args["individual_id"] = indiv_id;
     var request = getRequest("GetBiologicalIndividual", args);
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
     var msg = new Message(msg_xml, this.masterCallback);

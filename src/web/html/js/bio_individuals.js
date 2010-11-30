@@ -30,7 +30,7 @@ function getIndividualsCallback(response, credentials, error, msg) {
       class = "";
     else
       class = "odd_row";
-    var oid = node.getElementsByTagName("suffix_design")[0].firstChild.nodeValue;
+    var oid = node.getElementsByTagName("individual_id")[0].firstChild.nodeValue;
 
     var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(\"" + oid  + "\")' onmouseover='onRowMouseOver(\"" + oid + "\")' onmouseout='onRowMouseOut(\""+ oid +"\")'>";
     row += "<td>" + node.getElementsByTagName("suffix_design")[0].firstChild.nodeValue + "</td>";
