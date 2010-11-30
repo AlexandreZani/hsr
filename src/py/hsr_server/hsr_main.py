@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from hsr_server.hsr_db import HSRDBSqlAlchemyImpl
-from hsr_auth.auth_db import HSRAuthDBSqlAlchemyImpl
+from hsr_auth.auth_db import HSRAuthDBSqlAlchemyImpl, Permissions
 from hsr_server.handler import HsrHandler
 from hsr_auth.credentials import getHSRCredentials
 from sqlalchemy import *
@@ -44,7 +44,7 @@ class Application(object):
     self.template_env = Environment(loader=FileSystemLoader(self.html_path + "../jinja/"))
 
     try:
-      self.auth_db.createUser('admin', 'admin')
+      self.auth_db.createUser('admin', 'admin', Permissions.ADMIN)
     except Exception:
       pass
 
