@@ -16,14 +16,16 @@
 
 from hsr_server.requests import *
 from hsr_auth.credentials import HSRCredentialsException, HSRCredentials, getHSRCredentials
+from hsr_auth.auth_db import Permissions
 from hsr_server.tests.HSRDBTests import HSRDBTestImpl
 from hsr_auth.tests.HSRAuthDBTest import HSRAuthDBTestImpl, HSRAuthDBExcept
 
 class MockCredentials(HSRCredentials):
-  def __init__(self, valid=True, user_id=None, response=""):
+  def __init__(self, valid=True, user_id=None, response="", permissions=Permissions.READ):
     self.valid = valid
     self.user_id = user_id
     self.response = response
+    self.permissions = permissions
 
   def getUserId(self):
     if not self.valid:
@@ -32,6 +34,10 @@ class MockCredentials(HSRCredentials):
 
   def getResponse(self):
     return self.response
+
+  def checkPermissions(self, permissions):
+    if permissions < self.permissions:
+      raise HSRCredentialsException("InsufficientPermissions")
 
 class TestUnknownRequestType:
   def test_UnknownFactory(self):
@@ -51,6 +57,16 @@ class TestPingRequest:
   def test_PingExec(self):
     request = getHSRRequest("Ping", {}, MockCredentials(True), None)
     assert "<response>Ping</response>" == request.execute()[0]
+
+  def test_InsufficientPermissions(self):
+    request = getHSRRequest("Ping", {}, MockCredentials(True,
+      permissions=Permissions.NONE+1), None)
+    try:
+      request.execute()[0]
+    except HSRCredentialsException, (ex):
+      assert "InsufficientPermissions" == str(ex)
+    else:
+      assert False
 
 class TestListMuseumObjects:
   def test_ListMuseumObjectsFactory(self):
@@ -80,6 +96,17 @@ class TestListMuseumObjects:
     else:
       assert False
 
+  def test_ListMuseumObjectsInsufficientPermissions(self):
+    db = HSRDBTestImpl()
+    request = getHSRRequest("ListMuseumObjects", {}, MockCredentials(True, permissions=Permissions.NONE), db)
+
+    try:
+      request.execute()
+    except HSRCredentialsException, (instance):
+      assert str(instance) == "InsufficientPermissions"
+    else:
+      assert False
+
 class TestGetMuseumObjectRequest(HSRRequest):
   def test_GetMuseumObjectRequestFactory(self):
     request = getHSRRequest("GetMuseumObject", {}, None, None)
@@ -96,6 +123,21 @@ class TestGetMuseumObjectRequest(HSRRequest):
     response = request.execute()
 
     assert mo.toXml() in response[0]
+
+  def test_GetMuseumObjectRequestInsufficientPermissions(self):
+    db = HSRDBTestImpl()
+    mo = db.newMuseumObject("hello", "hi", "berkeley")
+    args = {"object_id" : mo.object_id}
+    credentials = MockCredentials(True, permissions=Permissions.NONE)
+
+    request = getHSRRequest("GetMuseumObject", args, credentials, db)
+
+    try:
+      request.execute()
+    except HSRCredentialsException, (instance):
+      assert str(instance) == "InsufficientPermissions"
+    else:
+      assert False
     
   def test_GetMuseumObjectRequestByCatalogueNum(self):
     db = HSRDBTestImpl()
@@ -156,6 +198,23 @@ class TestListIndividualsRequest:
     assert bi1.toXml() in response[0]
     assert bi2.toXml() in response[0]
 
+  def test_ListIndividualsNoPermissions(self):
+    db = HSRDBTestImpl()
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+    bi2 = db.newIndividual("b", "b1", 130, 310, "NA", 1)
+
+    args = {}
+    credentials = MockCredentials(True, permissions=Permissions.NONE)
+
+    request = getHSRRequest("ListIndividuals", args, credentials, db)
+
+    try:
+      request.execute()
+    except HSRCredentialsException, (instance):
+      assert str(instance) == "InsufficientPermissions"
+    else:
+      assert False
+
   def test_ListIndividualsBadCreds(self):
     db = HSRDBTestImpl()
     bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
@@ -188,6 +247,22 @@ class TestGetIndividualRequest:
     request = getHSRRequest("GetBiologicalIndividual", args, credentials, db)
 
     assert request.execute()[0] == "<response>" + bi.toXml() + "</response>"
+
+  def test_GetIndividualRequestInsufficientPermissions(self):
+    db = HSRDBTestImpl()
+    bi = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+
+    args = {"indiv_id" : bi.indiv_id}
+    credentials = MockCredentials(True, permissions=Permissions.NONE)
+
+    request = getHSRRequest("GetBiologicalIndividual", args, credentials, db)
+
+    try:
+      request.execute()
+    except HSRCredentialsException, (instance):
+      assert str(instance) == "InsufficientPermissions"
+    else:
+      assert False
 
   def test_GetIndividualRequestBySuffixDesign(self):
     db = HSRDBTestImpl()
@@ -236,7 +311,7 @@ class TestChangePasswordRequest:
     db = HSRAuthDBTestImpl()
     username = "loki"
     password = "key"
-    user = db.createUser(username, password)
+    user = db.createUser(username, password, Permissions.NONE)
     session = db.newSession(user.user_id)
 
     args = {"session_id" : session.session_id}
@@ -251,8 +326,23 @@ class TestChangePasswordRequest:
     user = db.getUserByName(username)
     assert user.CheckPassword(new_password)
 
+  def test_ChangePasswordRequestInsufficientPermissions(self):
+    db = HSRAuthDBTestImpl()
+    username = "loki"
+    password = "key"
+    user = db.createUser(username, password, Permissions.NONE+1)
+    session = db.newSession(user.user_id)
 
+    args = {"session_id" : session.session_id}
+    credentials = getHSRCredentials("SessionId", args, "127.0.0.1", db)
 
+    new_password = "card"
+    args = {"new_password" : new_password}
+    request = getHSRRequest("ChangePassword", args, credentials, None)
 
-
-
+    try:
+      request.execute()
+    except HSRCredentialsException, (instance):
+      assert str(instance) == "InsufficientPermissions"
+    else:
+      assert False

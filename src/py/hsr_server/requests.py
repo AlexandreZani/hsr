@@ -14,6 +14,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from hsr_auth.auth_db import Permissions
+
 def abstract():
   import inspect
   caller = inspect.getouterframes(inspect.currentframe())[1][3]
@@ -43,12 +45,14 @@ class PingRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
     self.credentials = credentials
     self.hsr_db = hsr_db
+    self.permissions = Permissions.NONE
 
   def getRequestType(self):
     return "Ping"
 
   def execute(self):
     self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     cred_response = self.credentials.getResponse()
     requ_response = "<response>Ping</response>"
     return (requ_response, cred_response)
@@ -57,12 +61,14 @@ class AllObjectsRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
     self.credentials = credentials
     self.hsr_db = hsr_db
+    self.permissions = Permissions.READ
 
   def getRequestType(self):
     return "ListMuseumObjects"
 
   def execute(self):
     self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     mos = self.hsr_db.getAllMuseumObjects()
     mos_xml = "<response>"
     for mo in mos:
@@ -74,6 +80,7 @@ class AllObjectsRequest(HSRRequest):
 class GetMuseumObjectRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
     self.credentials = credentials
+    self.permissions = Permissions.READ
     self.hsr_db = hsr_db
     try:
       self.object_id = args["object_id"]
@@ -90,6 +97,7 @@ class GetMuseumObjectRequest(HSRRequest):
 
   def execute(self):
     self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     cred_response = self.credentials.getResponse()
     if self.object_id != None:
       mo = self.hsr_db.getMuseumObjectById(self.object_id)
@@ -105,12 +113,14 @@ class AllIndividualsRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
     self.db = hsr_db
     self.credentials = credentials
+    self.permissions = Permissions.READ
 
   def getRequestType(self):
     return "ListIndividuals"
 
   def execute(self):
     self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     bis = self.db.getAllIndividuals()
     bis_xml = "<response>"
     for bi in bis:
@@ -120,6 +130,7 @@ class AllIndividualsRequest(HSRRequest):
 
 class GetBioIndividualRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
+    self.permissions = Permissions.READ
     self.credentials = credentials
     self.hsr_db = hsr_db
     try:
@@ -137,6 +148,7 @@ class GetBioIndividualRequest(HSRRequest):
 
   def execute(self):
     self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     if self.indiv_id != None:
       bi = self.hsr_db.getIndividualById(self.indiv_id)
     else:
@@ -151,12 +163,14 @@ class ChangePasswordRequest(HSRRequest):
   def __init__(self, args, credentials, hsr_db):
     self.credentials = credentials
     self.new_password = args["new_password"]
+    self.permissions = Permissions.NONE
 
   def getRequestType(self):
     return "ChangePassword"
 
   def execute(self):
     uid = self.credentials.getUserId()
+    self.credentials.checkPermissions(self.permissions)
     user = self.credentials.auth_db.getUserById(uid)
 
     user.UpdatePassword(self.new_password)
