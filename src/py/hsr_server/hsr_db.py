@@ -110,7 +110,10 @@ class BioIndividual(object):
 
   @min_age.setter
   def min_age(self, value):
-    self._min_age = float(value)
+    try:
+      self._min_age = float(value)
+    except ValueError:
+      self._min_age = 0
 
   @property
   def max_age(self):
@@ -118,7 +121,10 @@ class BioIndividual(object):
 
   @max_age.setter
   def max_age(self, val):
-    self._max_age = float(val)
+    try:
+      self._max_age = float(val)
+    except ValueError:
+      self._max_age = 0
 
   @property
   def sex(self):
@@ -126,13 +132,10 @@ class BioIndividual(object):
 
   @sex.setter
   def sex(self, val):
-    unknown = set(["Unknown", "unknown", "NA", "N/A", "na", "n/a",
-      self.NA])
     male = set(["Male", "M", "m", "male", self.MALE])
     female = set(["Female", "F", "f", "female", self.FEMALE])
-    if val in unknown:
-      self._sex = self.NA
-    elif val in male:
+    self._sex = self.NA
+    if val in male:
       self._sex = self.MALE
     elif val in female:
       self._sex = self.FEMALE
