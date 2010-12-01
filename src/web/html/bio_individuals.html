@@ -20,11 +20,16 @@
     <script type="text/javascript" src="/static/js/hsr_api.js"></script>
     <script type="text/javascript" src="/static/js/bio_individuals.js"></script>
   </head>
-  <body onload="getAllIndividuals()">
+  <body onload="getNextPage()">
     <h1>Biological Individuals</h1>
     <div id="bio_individuals_div">
       <table id="bio_individuals_table">
       </table>
+    </div>
+    <div id="page_num"></div>
+    <div>
+      <input type="button" value="Previous" onclick="getNextPage(-1)" />
+      <input type="button" value="Next" onclick="getNextPage(1)" />
     </div>
   </body>
 </html>

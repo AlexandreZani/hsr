@@ -14,9 +14,25 @@
  * limitations under the License.
  */
 
-function getAllIndividuals() {
+function getNextPage(jump) {
+  var limit = 15;
+  if(getNextPage.page == undefined) {
+    getNextPage.page = -1;
+  }
+  if(jump == undefined) {
+    getNextPage.page += 1;
+  } else {
+    getNextPage.page += jump;
+  }
+
+  if(getNextPage.page < 0) {
+    getNextPage.page = 0;
+  }
+
+  document.getElementById("page_num").innerHTML = "Page Number: " + getNextPage.page;
+
   var api = getHsrApi();
-  api.getBioIndividuals(getIndividualsCallback);
+  api.getBioIndividuals(limit, getNextPage.page*limit, getIndividualsCallback)
 }
 
 function getIndividualsCallback(response, credentials, error, msg) {

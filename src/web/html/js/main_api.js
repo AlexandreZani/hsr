@@ -93,8 +93,11 @@ function HsrApi(dispatcher) {
     this.dispatcher.sendMessage(msg);
   }
 
-  this.getBioIndividuals = function(callback) {
-    var request = getRequest("ListIndividuals", new Array());
+  this.getBioIndividuals = function(limit, offset, callback) {
+    var args = new Array();
+    args["limit"] = limit;
+    args["offset"] = offset;
+    var request = getRequest("ListIndividuals", args);
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
     var msg = new Message(msg_xml, this.masterCallback);
     msg.type = "ListIndividuals";

@@ -84,12 +84,22 @@ function GetMuseumObjectRequest(args) {
 }
 
 function AllIndividualsRequest(args) {
+  this.args = args;
+
   this.getRequestType = function() {
     return "ListIndividuals";
   }
 
   this.toXml = function() {
-    return "<request><type>"+ this.getRequestType() +"</type></request>";
+    var ret = "<request><type>" + this.getRequestType() + "</type><args>";
+
+    for(var key in this.args) {
+      ret += "<" + key + ">" + this.args[key] + "</" + key + ">";
+    }
+
+    ret += "</args></request>";
+
+    return ret;
   }
 }
 
