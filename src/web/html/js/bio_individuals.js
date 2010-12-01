@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-function getNextPage(jump) {
+function getNextPage(jump, goto) {
   var limit = 15;
   if(getNextPage.page == undefined) {
     getNextPage.page = -1;
   }
+
+  if(goto != undefined) {
+    getNextPage.page = goto;
+  }
+
   if(jump == undefined) {
     getNextPage.page += 1;
   } else {
@@ -29,7 +34,7 @@ function getNextPage(jump) {
     getNextPage.page = 0;
   }
 
-  document.getElementById("page_num").innerHTML = "Page Number: " + getNextPage.page;
+  document.getElementById("page_num").value= getNextPage.page;
 
   var api = getHsrApi();
   api.getBioIndividuals(limit, getNextPage.page*limit, getIndividualsCallback)
@@ -69,4 +74,18 @@ function onRowMouseOut(oid) {
 
 function onRowClick(id) {
   window.location = "/jinja/bio_individual.html?suffix_design=" + id;
+}
+
+function onPageNumKeyPress(e) {
+  var keynum = e.which;
+  if(keynum == 13) {
+    getNextPage(0, parseInt(document.getElementById("page_num").value));
+  }
+  if(keynum < 0x1F) {
+    return true;
+  }
+
+  var keychar = String.fromCharCode(keynum);
+  numcheck = /\d/;
+  return numcheck.test(keychar);
 }

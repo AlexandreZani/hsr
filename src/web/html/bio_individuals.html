@@ -26,7 +26,10 @@
       <table id="bio_individuals_table">
       </table>
     </div>
-    <div id="page_num"></div>
+    <div id="page_num_div">
+      <label for="page_num">Page Number</label>
+      <input id="page_num" value="0" onkeypress="return onPageNumKeyPress(event)" />
+    </div>
     <div>
       <input type="button" value="Previous" onclick="getNextPage(-1)" />
       <input type="button" value="Next" onclick="getNextPage(1)" />
