@@ -135,7 +135,7 @@ class BioIndividual(object):
     elif val in male:
       self._sex = self.MALE
     elif val in female:
-      self._sez = self.FEMALE
+      self._sex = self.FEMALE
 
   def __init__(self, indiv_id = None, suffix = None, suffix_design =
       None, min_age = None, max_age = None, sex = None, museum_object = None):
