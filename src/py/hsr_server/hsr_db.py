@@ -274,11 +274,11 @@ class HSRDBSqlAlchemyImpl(HSRDB):
     return MuseumObject(row.ObjectID, row.CatalogueID,
         row.ObjectNumber, row.Site)
 
-  def getAllMuseumObjects(self):
+  def getAllMuseumObjects(self, limit=None, offset=None):
     conn = self.getConn()
     metadata = MetaData(conn)
     mos = Table('Objects', metadata, autoload=True)
-    stmt = mos.select()
+    stmt = mos.select(order_by="ObjectID", limit=limit, offset=offset)
     result = conn.execute(stmt)
     
     mos = []
@@ -384,12 +384,12 @@ class HSRDBSqlAlchemyImpl(HSRDB):
       return True
     return False
 
-  def getAllIndividuals(self):
+  def getAllIndividuals(self, limit=None, offset=None):
     conn = self.getConn()
     metadata = MetaData(conn)
     indivs = Table('Individuals', metadata, autoload=True)
 
-    stmt = indivs.select()
+    stmt = indivs.select(limit=limit, offset=offset, order_by="IndividualID")
     result = conn.execute(stmt)
     conn.close()
 

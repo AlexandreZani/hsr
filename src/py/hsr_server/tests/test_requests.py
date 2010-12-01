@@ -85,6 +85,24 @@ class TestListMuseumObjects:
     assert mo1.toXml() in response
     assert mo2.toXml() in response
 
+  def test_ListMuseumObjectsLimit(self):
+    db = HSRDBTestImpl()
+    mo1 = db.newMuseumObject("hello", "hi", "berkeley")
+    mo2 = db.newMuseumObject("helslo", "hsfi", "berdkeley")
+    mo3 = db.newMuseumObject("helsldsfo", "hssfi", "berdskeley")
+    mo4 = db.newMuseumObject("hesdfklslo", "hsffi", "bedrdkeley")
+
+    args = {"limit" : "2", "offset" : "1" }
+
+    request = getHSRRequest("ListMuseumObjects", args, MockCredentials(True), db)
+
+    response = request.execute()[0]
+
+    assert mo1.toXml() not in response
+    assert mo2.toXml() in response
+    assert mo3.toXml() in response
+    assert mo4.toXml() not in response
+
   def test_ListMuseumObjectsInvalidCreds(self):
     db = HSRDBTestImpl()
     request = getHSRRequest("ListMuseumObjects", {}, MockCredentials(False), db)
@@ -198,6 +216,25 @@ class TestListIndividualsRequest:
     assert bi1.toXml() in response[0]
     assert bi2.toXml() in response[0]
 
+  def test_ListIndividuals(self):
+    db = HSRDBTestImpl()
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+    bi2 = db.newIndividual("bgfd", "sdb1", 130, 310, "NA", 1)
+    bi3 = db.newIndividual("fsb", "sb1", 13210, 32310, "NA", 1)
+    bi4 = db.newIndividual("sb", "bdf1", 1230, 3130, "NA", 1)
+
+    args = {"limit" : "2", "offset" : "1"}
+    credentials = MockCredentials(True)
+
+    request = getHSRRequest("ListIndividuals", args, credentials, db)
+
+    response = request.execute()
+
+    assert bi1.toXml() not in response[0]
+    assert bi2.toXml() in response[0]
+    assert bi3.toXml() in response[0]
+    assert bi4.toXml() not in response[0]
+    
   def test_ListIndividualsNoPermissions(self):
     db = HSRDBTestImpl()
     bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)

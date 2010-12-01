@@ -41,10 +41,15 @@ class HSRDBTestImpl(HSRDB):
         return mo.copy()
     return None
 
-  def getAllMuseumObjects(self):
+  def getAllMuseumObjects(self, limit=None, offset=0):
     mos = []
+    num = 0
     for mo in self.museum_objects:
-      mos.append(mo.copy())
+      if offset <= 0 and (limit == None or num < limit):
+        mos.append(mo.copy())
+        num += 1
+      else:
+        offset -= 1
     return mos
 
   def writeMuseumObject(self, museum_object):
@@ -96,10 +101,15 @@ class HSRDBTestImpl(HSRDB):
         return True
     return False 
 
-  def getAllIndividuals(self):
+  def getAllIndividuals(self, limit=None, offset=0):
     bis = []
+    num = 0
     for bi in self.indivs:
-      bis.append(bi)
+      if offset <= 0 and (limit == None or num < limit):
+        bis.append(bi)
+        num += 1
+      else:
+        offset -= 1
     return bis
 
   def deleteIndividual(self, indiv_id):

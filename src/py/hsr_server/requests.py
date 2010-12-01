@@ -62,6 +62,15 @@ class AllObjectsRequest(HSRRequest):
     self.credentials = credentials
     self.hsr_db = hsr_db
     self.permissions = Permissions.READ
+    try:
+      self.limit = int(args["limit"])
+    except KeyError:
+      self.limit = None
+
+    try:
+      self.offset = int(args["offset"])
+    except KeyError:
+      self.offset = 0
 
   def getRequestType(self):
     return "ListMuseumObjects"
@@ -69,7 +78,7 @@ class AllObjectsRequest(HSRRequest):
   def execute(self):
     self.credentials.getUserId()
     self.credentials.checkPermissions(self.permissions)
-    mos = self.hsr_db.getAllMuseumObjects()
+    mos = self.hsr_db.getAllMuseumObjects(limit=self.limit, offset=self.offset)
     mos_xml = "<response>"
     for mo in mos:
       mos_xml += mo.toXml()
@@ -114,6 +123,15 @@ class AllIndividualsRequest(HSRRequest):
     self.db = hsr_db
     self.credentials = credentials
     self.permissions = Permissions.READ
+    try:
+      self.limit = int(args["limit"])
+    except KeyError:
+      self.limit = None
+
+    try:
+      self.offset = int(args["offset"])
+    except KeyError:
+      self.offset = 0
 
   def getRequestType(self):
     return "ListIndividuals"
@@ -121,7 +139,8 @@ class AllIndividualsRequest(HSRRequest):
   def execute(self):
     self.credentials.getUserId()
     self.credentials.checkPermissions(self.permissions)
-    bis = self.db.getAllIndividuals()
+    bis = self.db.getAllIndividuals(limit=self.limit,
+        offset=self.offset)
     bis_xml = "<response>"
     for bi in bis:
       bis_xml += bi.toXml()

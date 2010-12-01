@@ -104,6 +104,19 @@ class TestDB:
     assert mo2 in mos
     assert mo3 not in mos
 
+  def test_getAllMuseumObjectsLimit(self, db):
+    mo1 = db.newMuseumObject("hello", "hi", "berkeley")
+    mo2 = db.newMuseumObject("helslo", "hsfi", "berdkeley")
+    mo3 = db.newMuseumObject("helssdlo", "shsfi", "berfgdkeley")
+    mo4 = db.newMuseumObject("helsfslo", "hsdfsfi", "berdkelesdfy")
+
+    mos = db.getAllMuseumObjects(limit=2, offset=1)
+
+    assert mo1 not in mos
+    assert mo2 in mos
+    assert mo3 in mos
+    assert mo4 not in mos
+
   def test_deleteMuseumObject(self, db):
     mo1 = db.newMuseumObject("hello", "hi", "berkeley")
     mo2 = db.newMuseumObject("helslo", "hsfi", "berdkeley")
@@ -203,6 +216,17 @@ class TestDB:
     assert bi1 in bis
     assert bi2 in bis
     assert bi3 not in bis
+
+  def test_getAllIndividualsLimits(self, db):
+    bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
+    bi2 = db.newIndividual("b", "b1", 130, 310, "NA", 1)
+    bi3 = db.newIndividual("fa", "d1", 140, 320, "NA", 1)
+    bi4 = db.newIndividual("fa3", "d21", 2140, 3230, "NA", 21)
+    bis = db.getAllIndividuals(limit=2, offset=1)
+    assert bi1 not in bis
+    assert bi2 in bis
+    assert bi3 in bis
+    assert bi4 not in bis
 
   def test_deleteIndividual(self, db):
     bi1 = db.newIndividual("a", "a1", 10, 30, "NA", 1)
