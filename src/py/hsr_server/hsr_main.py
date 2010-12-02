@@ -14,13 +14,9 @@ import string
 from jinja2 import Environment, FileSystemLoader
 
 class Application(object):
-  def __init__(self, config_file, html_path):
-    self.config_file = config_file
+  def __init__(self, config, html_path):
     self.html_path = html_path
 
-    config = ConfigParser.RawConfigParser()
-    config.readfp(open(self.config_file))
-  
     hsr_db_url = config.get("hsr_db", "type") + "://"
     hsr_db_url += config.get("hsr_db", "username")
     hsr_db_url += ":" + config.get("hsr_db", "password")

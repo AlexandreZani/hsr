@@ -3,6 +3,7 @@
 from wsgiref import simple_server
 from hsr_server.hsr_main import Application
 import sys, os
+import ConfigParser
 
 if __name__ == "__main__":
   root_path = os.path.dirname(sys.argv[0])
@@ -14,7 +15,10 @@ if __name__ == "__main__":
   else:
     config_file = "../conf/hsr.conf"
 
-  app = Application(config_file, html_path)
+  config = ConfigParser.RawConfigParser()
+  config.readfp(open(config_file))
+
+  app = Application(config, html_path)
   httpd = simple_server.WSGIServer(('localhost', 8000), simple_server.WSGIRequestHandler,)
   httpd.set_app(app)
   httpd.serve_forever()
