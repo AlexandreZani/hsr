@@ -54,10 +54,10 @@ function getIndividualsCallback(response, credentials, error, msg) {
     var oid = node.getElementsByTagName("individual_id")[0].firstChild.nodeValue;
 
     var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(\"" + oid  + "\")' onmouseover='onRowMouseOver(\"" + oid + "\")' onmouseout='onRowMouseOut(\""+ oid +"\")'>";
-    row += "<td>" + node.getElementsByTagName("suffix_design")[0].firstChild.nodeValue + "</td>";
-    row += "<td>" + node.getElementsByTagName("sex")[0].firstChild.nodeValue + "</td>";
-    row += "<td>" + node.getElementsByTagName("min_age")[0].firstChild.nodeValue + "</td>";
-    row += "<td>" + node.getElementsByTagName("max_age")[0].firstChild.nodeValue + "</td>";
+    row += "<td>" + get_xml_value(node, "suffix_design") + "</td>";
+    row += "<td>" + get_xml_value(node, "sex") + "</td>";
+    row += "<td>" + get_xml_value(node, "min_age") + "</td>";
+    row += "<td>" + get_xml_value(node, "max_age") + "</td>";
     row += "</tr>";
     table_innerHTML += row;
   }

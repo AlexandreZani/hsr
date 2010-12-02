@@ -20,11 +20,19 @@
     <script type="text/javascript" src="/static/js/hsr_api.js"></script>
     <script type="text/javascript" src="/static/js/museum_objects.js"></script>
   </head>
-  <body onload="getAllMuseumObjects()">
+  <body onload="getNextPage()">
     <h1>Museum Objects</h1>
     <div id="museum_objects_div">
       <table id="museum_objects_table">
       </table>
+    </div>
+    <div id="page_num_div">
+      <label for="page_num">Page Number</label>
+      <input id="page_num" value="0" onkeypress="return onPageNumKeyPress(event)" />
+    </div>
+    <div>
+      <input type="button" value="Previous" onclick="getNextPage(-1)" />
+      <input type="button" value="Next" onclick="getNextPage(1)" />
     </div>
   </body>
 </html>

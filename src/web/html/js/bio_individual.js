@@ -24,14 +24,14 @@ function getBioIndividualCallback(response, credentials, error, msg) {
   var node = response.getElementsByTagName("bio_individual")[0];
 
   table_innerHTML += "<tr><td>Suffix Designation</td>";
-  table_innerHTML += "<td>" + node.getElementsByTagName("suffix_design")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "suffix_design") + "</td></tr>";
 
   table_innerHTML += "<tr><td>Sex</td>";
-  table_innerHTML += "<td>" + node.getElementsByTagName("sex")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "sex") + "</td></tr>";
 
   table_innerHTML += "<tr><td>Age</td>";
-  table_innerHTML += "<td>" + node.getElementsByTagName("min_age")[0].firstChild.nodeValue;
-  table_innerHTML += " to " + node.getElementsByTagName("max_age")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "min_age");
+  table_innerHTML += " to " + get_xml_value(node, "max_age") + "</td></tr>";
 
   document.getElementById("bio_individual").innerHTML = table_innerHTML;
 }

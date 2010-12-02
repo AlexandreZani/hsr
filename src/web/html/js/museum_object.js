@@ -24,11 +24,11 @@ function getMuseumObjectCallback(response, credentials, error, msg) {
   node = response.getElementsByTagName("museum_object")[0];
 
   table_innerHTML += "<tr><td>Catalogue Number</td>"
-  table_innerHTML += "<td>" + node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "catalogue_number") + "</td></tr>";
   table_innerHTML += "<tr><td>Object Number</td>"
-  table_innerHTML += "<td>" + node.getElementsByTagName("object_number")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "object_number") + "</td></tr>";
   table_innerHTML += "<tr><td>Site</td>"
-  table_innerHTML += "<td>" + node.getElementsByTagName("site")[0].firstChild.nodeValue + "</td></tr>";
+  table_innerHTML += "<td>" + get_xml_value(node, "site") + "</td></tr>";
 
   document.getElementById("museum_object").innerHTML = table_innerHTML;
 }

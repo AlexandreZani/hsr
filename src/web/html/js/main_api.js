@@ -84,8 +84,11 @@ function HsrApi(dispatcher) {
     this.dispatcher.sendMessage(msg);
   }
 
-  this.getMuseumObjects = function(callback) {
-    var request = getRequest("ListMuseumObjects", new Array());
+  this.getMuseumObjects = function(limit, offset, callback) {
+    var args = new Array();
+    args["limit"] = limit;
+    args["offset"] = offset;
+    var request = getRequest("ListMuseumObjects", args);
     var msg_xml = "<HSR>" + unescape(getCookie("credentials")) + request.toXml() + "</HSR>";
     var msg = new Message(msg_xml, this.masterCallback);
     msg.type = "ListMuseumObjects";
@@ -127,3 +130,24 @@ function HsrApi(dispatcher) {
     this.dispatcher.sendMessage(msg);
   }
 }
+
+function get_xml_value(node, tag_name) {
+  var elements = node.getElementsByTagName(tag_name);
+  if(elements == null)
+    return "";
+
+  var element = elements[0];
+  if(element == null)
+    return "";
+
+  var child = element.firstChild;
+  if(child == null)
+    return "";
+
+  return child.nodeValue;
+}
+
+
+
+
+

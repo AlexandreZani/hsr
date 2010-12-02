@@ -14,9 +14,30 @@
  * limitations under the License.
  */
 
-function getAllMuseumObjects() {
+function getNextPage(jump, goto) {
+  var limit = 15;
+  if(getNextPage.page == undefined) {
+    getNextPage.page = -1;
+  }
+
+  if(goto != undefined) {
+    getNextPage.page = goto;
+  }
+
+  if(jump == undefined) {
+    getNextPage.page += 1;
+  } else {
+    getNextPage.page += jump;
+  }
+
+  if(getNextPage.page < 0) {
+    getNextPage.page = 0;
+  }
+
+  document.getElementById("page_num").value= getNextPage.page;
+
   var api = getHsrApi();
-  api.getMuseumObjects(getMuseumObjectsCallback);
+  api.getMuseumObjects(limit, getNextPage.page*limit, getMuseumObjectsCallback);
 }
 
 function getMuseumObjectsCallback(response, credentials, error, msg) {
@@ -33,9 +54,9 @@ function getMuseumObjectsCallback(response, credentials, error, msg) {
     var oid = node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue;
 
     var row = "<tr id='row" + oid + "' class='" + class + "' onclick='onRowClick(\"" + oid  + "\")' onmouseover='onRowMouseOver(\"" + oid + "\")' onmouseout='onRowMouseOut(\""+ oid +"\")'>";
-    row += "<td>" + node.getElementsByTagName("object_number")[0].firstChild.nodeValue + "</td>";
-    row += "<td>" + node.getElementsByTagName("catalogue_number")[0].firstChild.nodeValue + "</td>";
-    row += "<td>" + node.getElementsByTagName("site")[0].firstChild.nodeValue + "</td>";
+    row += "<td>" + get_xml_value(node, "object_number") + "</td>";
+    row += "<td>" + get_xml_value(node, "catalogue_number") + "</td>";
+    row += "<td>" + get_xml_value(node, "site") + "</td>";
     row += "</tr>";
     table_innerHTML += row;
   }

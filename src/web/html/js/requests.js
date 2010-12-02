@@ -54,12 +54,22 @@ function PingRequest(args) {
 }
 
 function AllObjectsRequest(args) {
+  this.args = args;
+
   this.getRequestType = function() {
     return "ListMuseumObjects"
   }
 
   this.toXml = function() {
-    return "<request><type>ListMuseumObjects</type></request>";
+    var ret = "<request><type>" + this.getRequestType() + "</type><args>";
+
+    for(var key in this.args) {
+      ret += "<" + key + ">" + this.args[key] + "</" + key + ">";
+    }
+
+    ret += "</args></request>";
+
+    return ret;
   }
 }
 
