@@ -43,15 +43,11 @@ def pytest_generate_tests(metafunc):
   if 'db' in metafunc.funcargnames:
     metafunc.addcall(param=1)
     metafunc.addcall(param=2)
-    metafunc.addcall(param=3)
 
 def pytest_funcarg__db(request):
   if request.param == 1:
     return HSRAuthDBTestImpl()
   elif request.param == 2:
-    return HSRAuthDBMySqlImpl('localhost', 'test', 'password',
-        'HSRAuthDB', True)
-  elif request.param == 3:
     db = create_engine("mysql://test:password@localhost/HSRAuthDB")
     conn = db.connect()
     metadata = MetaData(conn)

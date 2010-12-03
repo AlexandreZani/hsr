@@ -17,8 +17,6 @@
 from hashlib import sha1
 from os import urandom
 import time
-import MySQLdb
-from MySQLdb import IntegrityError
 from sqlalchemy import *
 
 def abstract():
@@ -136,130 +134,6 @@ class HSRAuthDB:
         need_new_session = True
 
     return session
-
-
-class HSRAuthDBMySqlImpl(HSRAuthDB):
-  def __init__(self, host, user, password, database, clear=False):
-    self.db_host = host
-    self.db_user = user
-    self.db_pass = password
-    self.db_name = database
-    self.OpenDatabase()
-    if clear:
-      self.ClearDatabase()
-
-  def OpenDatabase(self):
-    self.db = MySQLdb.connect(self.db_host, self.db_user,
-        self.db_pass, self.db_name)
-
-  def ClearDatabase(self):
-    cursor = self.db.cursor();
-    cursor.execute("DELETE FROM Users;")
-    cursor.execute("DELETE FROM Sessions;")
-
-  def writeUser(self, user):
-    params = [user.username, user.password_hash, user.salt,
-        user.permissions, user.user_id]
-    sql = """UPDATE Users
-    SET Username=%s, PasswordHash=%s, Salt=%s, Permissions=%s
-    WHERE UserID=%s
-    """
-    cursor = self.db.cursor()
-    try:
-      cursor.execute(sql, params)
-    except IntegrityError:
-      raise HSRAuthDBExcept("Could not write User!")
-
-    if cursor.rowcount < 1:
-      raise HSRAuthDBExcept("Could not write User!")
-
-  def createUser(self, username, password, permissions=Permissions.READ):
-    user = User(0, username, password, permissions=permissions)
-    params = [user.username, user.salt, user.password_hash,
-        user.permissions]
-    sql = """INSERT INTO Users(Username, Salt, PasswordHash, Permissions)
-      VALUES (%s, %s, %s, %s);"""
-    
-    cursor = self.db.cursor()
-    try:
-      cursor.execute(sql, params)
-    except IntegrityError:
-      raise HSRAuthDBExcept("Could not create User!")
-    user.user_id = int(cursor.lastrowid)
-
-    return user
-
-  def getUserByName(self, username):
-    params = [username]
-    sql = """SELECT UserID, Username, PasswordHash, Salt, Permissions FROM Users
-    WHERE Username=%s"""
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-    try:
-      result = cursor.fetchall()[0]
-    except IndexError:
-      return None
-    return User(result[0], result[1], result[2], result[3], result[4])
-
-  def getUserById(self, uid):
-    params = [uid]
-    sql = """SELECT UserID, Username, PasswordHash, Salt FROM Users
-    WHERE UserID=%s"""
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-    try:
-      result = cursor.fetchall()[0]
-    except IndexError:
-      return None
-    return User(result[0], result[1], result[2], result[3])
-
-  def deleteUser(self, user):
-    params = [user.user_id]
-    sql = "DELETE FROM Users WHERE UserID=%s;"
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-
-  def getSessionById(self, session_id):
-    params = [session_id]
-    sql = """SELECT UserID, SessionID, CreationTime, LastTouched FROM
-    Sessions WHERE SessionID=%s;"""
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-    results = cursor.fetchall()
-    try:
-      return Session(results[0][0], results[0][1], results[0][2], results[0][3])
-    except IndexError, (instance):
-      return None
-
-  def writeSession(self, session):
-    params = [session.user_id, session.session_id,
-        session.created, session.last_used]
-    sql = """INSERT INTO Sessions(UserID, SessionID, CreationTime,
-    LastTouched) VALUES(%s, %s, %s, %s);"""
-    cursor = self.db.cursor()
-    try:
-      cursor.execute(sql, params)
-    except IntegrityError:
-      raise HSRAuthDBExcept("Could not write Session!")
-
-  def deleteSession(self, session):
-    params = [session.session_id, session.user_id]
-    sql = """DELETE FROM Sessions WHERE SessionID=%s AND UserID=%s"""
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-
-  def getSessionsByUser(self, user):
-    params = [user.user_id]
-    sql = """SELECT UserID, SessionID, CreationTime, LastTouched FROM
-    Sessions WHERE UserID=%s;"""
-    cursor = self.db.cursor()
-    cursor.execute(sql, params)
-    results = cursor.fetchall()
-    sessions = []
-    for session in results:
-      sessions.append(Session(session[0], session[1], session[2],
-        session[3]))
-    return sessions
 
 class HSRAuthDBSqlAlchemyImpl(HSRAuthDB):
   def __init__(self, db):
