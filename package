@@ -32,6 +32,7 @@ cp -f src/web/html/js/hsr_api.js $PKG_NAME/var/hsr/html/js
 cp -f src/web/html/js/main.js $PKG_NAME/var/hsr/html/js
 cp -f src/web/html/js/museum_object.js $PKG_NAME/var/hsr/html/js
 cp -f src/web/html/js/museum_objects.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/login.js $PKG_NAME/var/hsr/html/js
 
 mkdir -p $PKG_NAME/usr/local/hsr/bin
 cp -f src/web/bin/hsr_twisted.py $PKG_NAME/usr/local/hsr/bin
