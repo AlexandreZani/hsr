@@ -1,0 +1,8 @@
+#!/bin/sh
+
+./src/web/html/js/Build
+
+rm -f ./src/db/*.sql
+xmltosql ./src/db/hsr_db.xml ./src/db/hsr_db.sql
+xmltosql ./src/db/auth_db.xml ./src/db/auth_db.sql
+cat ./src/db/*.sql > ./src/db/create_db.sql

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+MODULE_PATH="/usr/local/hsr/python"
+PY_FILE="/usr/local/hsr/bin/hsr_twisted.py"
+LOG_FILE="/var/log/hsr.log"
+PID_FILE="/var/hsr/hsr.pid"
+CMD="twistd --python ${PY_FILE} --logfile ${LOG_FILE} --pidfile ${PID_FILE}"
+
+case "$1" in
+  start)
+    export PYTHONPATH="${MODULE_PATH}:${PYTHONPATH}"
+    $CMD
+    ;;
+
+  stop)
+    pkill -9 -f "$CMD"
+    ;;
+
+  restart)
+    $0 stop
+    $0 start
+    ;;
+
+  *)
+     echo "Usage: $0 {start|stop|restart|status}"
+     exit 1
+     ;;
+ esac
+

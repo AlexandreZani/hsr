@@ -1,0 +1,50 @@
+#!/bin/sh
+
+PKG_NAME="hsr_1.5-1_all"
+
+sh Build
+
+rm -rf $PKG_NAME
+
+mkdir $PKG_NAME
+
+cp -rf DEBIAN $PKG_NAME
+
+mkdir -p $PKG_NAME/etc/hsr/
+cp -rf src/web/conf/* $PKG_NAME/etc/hsr
+
+mkdir -p $PKG_NAME/etc/init.d
+cp -f src/bin/initd $PKG_NAME/etc/init.d/hsr
+
+mkdir -p $PKG_NAME/var/hsr/
+cp -rf src/web/jinja $PKG_NAME/var/hsr/
+
+mkdir -p $PKG_NAME/var/hsr/html
+cp -rf src/web/html/*.html $PKG_NAME/var/hsr/html
+cp -rf src/web/html/css $PKG_NAME/var/hsr/html
+
+sh src/web/html/js/Build
+mkdir -p $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/bio_individual.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/bio_individuals.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/change_password.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/hsr_api.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/main.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/museum_object.js $PKG_NAME/var/hsr/html/js
+cp -f src/web/html/js/museum_objects.js $PKG_NAME/var/hsr/html/js
+
+mkdir -p $PKG_NAME/usr/local/hsr/bin
+cp -f src/web/bin/hsr_twisted.py $PKG_NAME/usr/local/hsr/bin
+cp -f src/bin/converter.py $PKG_NAME/usr/local/hsr/bin
+cp -f src/bin/setup_database.py $PKG_NAME/usr/local/hsr/bin
+
+mkdir -p $PKG_NAME/usr/local/hsr/python/hsr_server
+cp -rf src/py/hsr_server/*.py $PKG_NAME/usr/local/hsr/python/hsr_server
+
+mkdir -p $PKG_NAME/usr/local/hsr/python/hsr_auth
+cp -rf src/py/hsr_auth/*.py $PKG_NAME/usr/local/hsr/python/hsr_auth
+
+mkdir -p $PKG_NAME/usr/local/hsr/db
+cp src/db/create_db.sql $PKG_NAME/usr/local/hsr/db
+
+fakeroot dpkg --build $PKG_NAME

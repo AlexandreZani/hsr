@@ -1,0 +1,9 @@
+Package: hsr 
+Version: 0.5-1
+Section: base
+Priority: optional
+Architecture: all
+Depends: python-minimal, python-twisted-core, python-jinja2, python-twisted-web, python-sqlalchemy, python-mysqldb, mysql-server
+Maintainer: Alexandre Zani <alexandre.zani@gmail.com>
+Description: Human Skeletal Remains Database
+ Human Skeletal Remains Database and Website

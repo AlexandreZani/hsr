@@ -8,10 +8,11 @@ import ConfigParser
 
 # Create and start a thread pool,
 wsgiThreadPool = ThreadPool()
-wsgiThreadPool.start()
+#wsgiThreadPool.start()
 
 # ensuring that it will be stopped when the reactor shuts down
 reactor.addSystemEventTrigger('after', 'shutdown', wsgiThreadPool.stop)
+reactor.addSystemEventTrigger('after', 'startup', wsgiThreadPool.start)
 
 config_file = "/etc/hsr/hsr.conf"
 html_path = "/var/hsr/html/"
