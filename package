@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PKG_NAME="hsr_1.5-1_all"
+PKG_NAME="hsr_0.5-1_all"
 
 sh Build
 

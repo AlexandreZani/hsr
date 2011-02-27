@@ -1,5 +1,7 @@
 #!/bin/sh
 
+./run-tests
+
 ./src/web/html/js/Build
 
 rm -f ./src/db/*.sql
