@@ -14,12 +14,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import sys
+sys.path.append("/usr/local/hsr/python")
+
 from hsr_server.hsr_db import *
 from sqlalchemy import *
 import ConfigParser
-import os, sys
 import getopt
 import csv
+import os
 
 def usage(name):
   print name, "[-h] [-c config_file] <suffixed_portion.csv> <catalogue_object.csv>"
@@ -67,7 +70,7 @@ def main(config_file, bi_file, mo_file):
   hsr_db = HSRDBSqlAlchemyImpl(hsr_db_engine)
 
   for mo in mo_csv:
-    hsr_db.newMuseumObject(mo["CatalogID"], mo["ObjectNumber"], "")
+    hsr_db.newMuseumObject(mo["CatalogID"], mo["ObjectNumber"], mo["Site"])
 
   for bi in bi_csv:
     hsr_db.newIndividual(bi["Suffix"], bi["SuffixDesignation"],
