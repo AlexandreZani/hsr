@@ -45,7 +45,7 @@ class AuthController(object):
 
     return user
 
-  def _get_user(self, username, db_session=None):
+  def get_user(self, username, db_session=None):
     if db_session == None:
       db_session = self._get_db_session()
 
@@ -66,7 +66,7 @@ class AuthController(object):
   def create_session(self, username, password):
     db_session = self._get_db_session()
 
-    user = self._get_user(username, db_session)
+    user = self.get_user(username, db_session)
 
     if not user.check_password(password):
       raise WrongPassword()
@@ -93,7 +93,7 @@ class AuthController(object):
 
     db_session.commit()
 
-    return self._get_user(session.username, db_session)
+    return self.get_user(session.username, db_session)
 
   def delete_sessions(self, username):
     db_session = self._get_db_session()

@@ -37,7 +37,7 @@ class TestAuth(object):
 
     auth_controller.create_user(username, password, Permissions.ADMIN)
 
-    user = auth_controller._get_user(username)
+    user = auth_controller.get_user(username)
 
     assert user.username == username
     assert user.check_password(password)
