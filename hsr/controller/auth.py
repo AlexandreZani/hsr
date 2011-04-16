@@ -81,7 +81,7 @@ class AuthController(object):
     return session
 
   def get_session_user(self, session_id,
-      session_expiration=hsr.settings.session_expiration):
+      session_expiration=60*60):
     db_session = self._get_db_session()
 
     session = self._get_session(session_id, db_session)
