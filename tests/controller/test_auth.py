@@ -60,6 +60,8 @@ class TestAuth(object):
     s = auth_controller.create_session(username, password)
 
     assert s.username == username
+    assert s.user.username == username
+    assert s == s.user.sessions[0]
 
   def test_create_session_wrong_user(self, auth_controller):
     username = "name"

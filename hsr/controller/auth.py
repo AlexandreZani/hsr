@@ -93,7 +93,7 @@ class AuthController(object):
 
     db_session.commit()
 
-    return self.get_user(session.username, db_session)
+    return session.user
 
   def delete_sessions(self, username):
     db_session = self._get_db_session()

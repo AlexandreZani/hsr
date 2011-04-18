@@ -13,10 +13,12 @@
 #   limitations under the License.
 
 from hsr.model.meta import Base
+from hsr.model.user import User
 from sqlalchemy import Integer, Column, ForeignKey, LargeBinary, String
 from os import urandom
 from binascii import hexlify, unhexlify
 from time import time
+from sqlalchemy.orm import relationship, backref
 
 class Session(Base):
   __tablename__ = 'sessions'
@@ -24,6 +26,7 @@ class Session(Base):
   username = Column(String, ForeignKey('users.username'))
   session_id = Column(LargeBinary, primary_key=True)
   last_touched = Column(Integer)
+  user = relationship(User, backref=backref('sessions', order_by=session_id))
 
   def __init__(self, username):
     self.username = username
