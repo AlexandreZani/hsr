@@ -1,2 +1,4 @@
 *.pyc
 *.egg-info/
+test_db.db
+.*.swp

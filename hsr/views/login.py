@@ -1,4 +1,4 @@
-#   Copyright Alexandre Zani (alexandre.zani@gmail.com) 
+#   Copyright 2011 Alexandre Zani (alexandre.zani@gmail.com) 
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,8 +12,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import hsr.views
-
-view_paths = [
-    ("/main/", hsr.views.static, ())
-]
+def login(environ, start_response):
+  status = "200 OK"
+  template = environ['pythia']['jinja_env'].get_template("hsr/login.html")
+  data = template.render()
+  response_headers = [
+      ('Content-type','text/html'),
+      ('Content-Length', str(len(data))),
+      ]
+  start_response(status, response_headers)
+  return iter([data])
