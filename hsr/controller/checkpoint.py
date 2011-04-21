@@ -34,10 +34,13 @@ class Checkpoint(object):
       environ['hsr'] = {'user' : None}
 
     environ['hsr']['auth_except'] = None
+    environ['hsr']['session'] = None
 
     try:
       sid = cookies['sid']
-      user = self.auth_controller.get_session_user(sid, self.session_expiration)
+      session = self.auth_controller.get_session(sid,
+          session_expiration=self.session_expiration)
+      user = session.user
     except (NoSuchSession, SessionExpired), e:
       environ['hsr']['auth_except'] = e
       return self.login_view(environ, start_response)
@@ -58,6 +61,7 @@ class Checkpoint(object):
         return self.login_view(environ, start_response)
 
     environ['hsr']['user'] = user
+    environ['hsr']['session'] = session
     environ['hsr']['auth_controller'] = SecureAuthController(
         self.auth_controller, user)
 
