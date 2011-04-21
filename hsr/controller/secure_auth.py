@@ -25,6 +25,7 @@ class SecureAuthController(object):
   def _check_permissions(self, min_permissions=Permissions.ADMIN):
     if min_permissions < self._user.permissions:
       raise InsufficientPermissions()
+    return True
 
   def create_user(self, *args):
     self._check_permissions(Permissions.ADMIN)
@@ -36,3 +37,10 @@ class SecureAuthController(object):
 
   def delete_sessions(self):
     return self._auth_controller.create_session(self._user.username)
+
+  def delete_session(self, session_id):
+    session = self._auth_controller._get_session(session_id)
+    if session.username == self._user.username or self._check_permissions():
+      return self._auth_controller.delete_session(session_id)
+    else:
+      raise InsufficientPermissions()

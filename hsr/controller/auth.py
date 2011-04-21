@@ -54,14 +54,21 @@ class AuthController(object):
     except IndexError:
       raise NoSuchUser(username)
 
-  def _get_session(self, db_session_id, db_session=None):
+  def get_session(self, session_id, db_session=None, session_expiration=60*60):
     if db_session == None:
       db_session = self._get_db_session()
 
     try:
-      return db_session.query(Session).filter_by(session_id=db_session_id).all()[0]
+      session = db_session.query(Session).filter_by(session_id=session_id).all()[0]
     except IndexError:
-      raise NoSuchSession(db_session_id)
+      raise NoSuchSession(session_id)
+
+    if not session.is_valid(session_expiration):
+      raise SessionExpired()
+
+    session.touch()
+
+    return session
 
   def create_session(self, username, password):
     db_session = self._get_db_session()
@@ -72,7 +79,6 @@ class AuthController(object):
       raise WrongPassword()
 
     session = Session(user.username)
-    print "At creation:", session.last_touched
 
     db_session.add(session)
 
@@ -84,12 +90,7 @@ class AuthController(object):
       session_expiration=60*60):
     db_session = self._get_db_session()
 
-    session = self._get_session(session_id, db_session)
-
-    if not session.is_valid(session_expiration):
-      raise SessionExpired()
-
-    session.touch()
+    session = self.get_session(session_id, db_session, session_expiration)
 
     db_session.commit()
 
@@ -99,5 +100,12 @@ class AuthController(object):
     db_session = self._get_db_session()
 
     db_session.query(Session).filter(Session.username==username).delete()
+
+    db_session.commit()
+
+  def delete_session(self, session_id):
+    db_session = self._get_db_session()
+
+    db_session.query(Session).filter(Session.session_id==session_id).delete()
 
     db_session.commit()

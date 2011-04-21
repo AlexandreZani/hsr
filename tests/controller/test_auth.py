@@ -105,7 +105,7 @@ class TestAuth(object):
     sleep(1)
     user = auth_controller.get_session_user(session.session_id)
 
-    s = auth_controller._get_session(session.session_id)
+    s = auth_controller.get_session(session.session_id)
 
     assert s.last_touched > first_touch
 
@@ -134,6 +134,20 @@ class TestAuth(object):
     session_id = session.session_id
 
     auth_controller.delete_sessions(username)
+
+    with pytest.raises(NoSuchSession):
+      auth_controller.get_session_user(session_id)
+
+  def test_delete_session_by_id(self, auth_controller):
+    username = "name"
+    password = "pass"
+
+    auth_controller.create_user(username, password, Permissions.ADMIN)
+
+    session = auth_controller.create_session(username, password)
+    session_id = session.session_id
+
+    auth_controller.delete_session(session_id)
 
     with pytest.raises(NoSuchSession):
       auth_controller.get_session_user(session_id)
