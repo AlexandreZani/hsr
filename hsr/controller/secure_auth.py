@@ -39,7 +39,7 @@ class SecureAuthController(object):
     return self._auth_controller.create_session(self._user.username)
 
   def delete_session(self, session_id):
-    session = self._auth_controller._get_session(session_id)
+    session = self._auth_controller.get_session(session_id)
     if session.username == self._user.username or self._check_permissions():
       return self._auth_controller.delete_session(session_id)
     else:
