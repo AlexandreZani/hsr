@@ -12,12 +12,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from hsr.urls import view_paths
-
 app_pkg = "hsr"
 templates = "views/templates"
 app_name = "Human Skeletal Remains Database"
-pre_views = []
 
 db_url = 'sqlite:////home/alexandre/prog/hsr2/test_db.db'
 

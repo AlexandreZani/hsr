@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PWD=`pwd`
+USER=`whoami`
 
 TEMP="./tmp"
 
@@ -10,8 +11,9 @@ NGINX="sudo nginx -c $NGINX_CONF -p $PWD/"
 G_PID="./tmp/gunicorn.pid"
 G_APP_MODULE="hsr.main:app"
 G_CONF="./misc/gunicorn.conf"
+G_DAEMON="--daemon"
 
-GUNICORN="gunicorn --pid $G_PID --config $G_CONF --daemon $G_APP_MODULE"
+GUNICORN="gunicorn --pid $G_PID --config $G_CONF $G_DAEMON $G_APP_MODULE"
 
 [ -d $TEMP ] || mkdir -p $TEMP
 
@@ -19,13 +21,14 @@ start()
 {
   echo "Starting"
   $NGINX
+  sudo chmod -R +rw $TEMP
+  sudo chown -R $USER:$USER $TEMP
   $GUNICORN
   echo "Done"
 }
 
 stop()
 {
-  [ -f $G_PID ] || exit 0
   echo "Stopping"
   pid=`cat $G_PID`
   kill $pid

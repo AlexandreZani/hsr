@@ -16,5 +16,7 @@ import hsr.views
 
 view_paths = [
     ("/main/", hsr.views.static, ()),
-    ("/logout/", hsr.views.logout, ())
+    ("/logout/", hsr.views.logout, ()),
+    ("/change_password/", hsr.views.change_password, ()),
+    ("/account_management/", hsr.views.static, ()),
 ]

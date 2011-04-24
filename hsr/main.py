@@ -19,6 +19,7 @@ from hsr import settings
 from hsr.controller.auth import AuthController, DuplicateUsername
 from sqlalchemy import create_engine
 from hsr.views import login
+from hsr.urls import view_paths
 
 class HSRInit(object):
   def __init__(self, engine):
@@ -39,6 +40,9 @@ try:
 except DuplicateUsername:
   pass
 
+settings.view_paths = view_paths
+
+settings.pre_views = []
 hsr_init = HSRInit(engine)
 settings.pre_views.append(hsr_init)
 
