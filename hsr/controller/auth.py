@@ -109,3 +109,12 @@ class AuthController(object):
     db_session.query(Session).filter(Session.session_id==session_id).delete()
 
     db_session.commit()
+
+  def change_password(self, username, new_password):
+    db_session = self._get_db_session()
+
+    user = self.get_user(username, db_session)
+
+    user.set_password(new_password)
+
+    db_session.commit()

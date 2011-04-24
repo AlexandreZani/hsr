@@ -44,3 +44,10 @@ class SecureAuthController(object):
       return self._auth_controller.delete_session(session_id)
     else:
       raise InsufficientPermissions()
+
+  def change_password(self, old_password, new_password):
+    if not self._user.check_password(old_password):
+      raise InsufficientPermissions()
+
+    self._auth_controller.change_password(self._user.username, new_password)
+

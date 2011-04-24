@@ -51,6 +51,20 @@ class TestAuth(object):
     with pytest.raises(DuplicateUsername):
       auth_controller.create_user(username, password, Permissions.ADMIN)
 
+  def test_change_password(self, auth_controller):
+    username = "name"
+    password = "pass"
+    new_pass = "new_pass"
+
+    auth_controller.create_user(username, password, Permissions.ADMIN)
+
+    auth_controller.change_password(username, new_pass)
+
+    user = auth_controller.get_user(username)
+
+    assert user.username == username
+    assert user.check_password(new_pass)
+
   def test_create_session(self, auth_controller):
     username = "name"
     password = "pass"
