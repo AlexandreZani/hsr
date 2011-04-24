@@ -23,6 +23,11 @@
     <div id='header'>
       {% block header %}
       <h1>{{ self.title() }}</h1>
+      {%- if user -%}
+      <a href="/logout">Logout</a>
+      <a href="/main">Main Menu</a>
+      <a href="/account_management">Account Management</a>
+      {% endif %}
       {% endblock %}
     </div>
     <div id='content'>

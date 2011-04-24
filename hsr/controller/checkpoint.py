@@ -66,5 +66,6 @@ class Checkpoint(object):
     environ['hsr']['session'] = session
     environ['hsr']['auth_controller'] = SecureAuthController(
         self.auth_controller, user)
+    environ['pythia']['jinja_env'].add_context_variables(user=user)
 
     return environ['pythia']['chain'](environ, start_response)
