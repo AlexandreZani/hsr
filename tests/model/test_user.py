@@ -22,3 +22,8 @@ class TestUser(object):
   def test_wrong_password(self):
     user = User("username", "password")
     assert not user.check_password("passord")
+
+  def test_set_password(self):
+    user = User("username", "passrd")
+    user.set_password("password")
+    assert user.check_password("password")
