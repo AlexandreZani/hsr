@@ -22,6 +22,7 @@
     <div id='header'>
       {% block header %}
       <h1>{{ self.title() }}</h1>
+      {% block references %}{% endblock references %}
       {% endblock %}
     </div>
     <div id='content'>
