@@ -1,0 +1,58 @@
+#!/bin/sh
+
+PWD=`pwd`
+
+TEMP="./tmp"
+
+NGINX_CONF="misc/nginx.conf"
+NGINX="sudo nginx -c $NGINX_CONF -p $PWD/"
+
+G_PID="./tmp/gunicorn.pid"
+G_APP_MODULE="hsr.main:app"
+G_CONF="./misc/gunicorn.conf"
+
+GUNICORN="gunicorn --pid $G_PID --config $G_CONF --daemon $G_APP_MODULE"
+
+[ -d $TEMP ] || mkdir -p $TEMP
+
+start()
+{
+  echo "Starting"
+  $NGINX
+  $GUNICORN
+  echo "Done"
+}
+
+stop()
+{
+  [ -f $G_PID ] || exit 0
+  echo "Stopping"
+  pid=`cat $G_PID`
+  kill $pid
+  $NGINX -s quit
+  echo "Done"
+}
+
+reload()
+{
+  [ -f $G_PID ] || exit 0
+  echo "Reloading config"
+  pid=`cat $G_PID`
+  $NGINX -s reload
+  kill -HUP $pid
+  echo "Done"
+}
+
+case $1 in
+  start)
+    start
+    ;;
+
+  stop)
+    stop
+    ;;
+
+  reload)
+    reload
+    ;;
+esac
