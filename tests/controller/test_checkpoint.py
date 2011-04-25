@@ -32,6 +32,10 @@ def pytest_funcarg__engine(request):
     Base.metadata.create_all(engine)
     return engine
 
+class MockJinjaEnv(object):
+  def add_context_variables(self, *args, **kwargs):
+    pass
+
 class TestCheckpointSessions(object):
   def test_valid_session(self, engine):
     def check_user(environ, start_response):
@@ -52,7 +56,8 @@ class TestCheckpointSessions(object):
     environ = {
         'HTTP_COOKIE' : 'sid=' + s.session_id,
         'pythia' : {
-          'chain' : check_user
+          'chain' : check_user,
+          'jinja_env' : MockJinjaEnv(),
           }
         }
 
@@ -67,6 +72,7 @@ class TestCheckpointSessions(object):
     environ = {
         'HTTP_COOKIE' : '',
         'pythia' : {
+          'jinja_env' : MockJinjaEnv(),
           'chain' : None
           }
         }
@@ -83,6 +89,7 @@ class TestCheckpointSessions(object):
     environ = {
         'HTTP_COOKIE' : 'sid=jhgaskasgd',
         'pythia' : {
+          'jinja_env' : MockJinjaEnv(),
           'chain' : None
           }
         }
@@ -108,6 +115,7 @@ class TestCheckpointSessions(object):
     environ = {
         'HTTP_COOKIE' : 'sid=' + s.session_id,
         'pythia' : {
+          'jinja_env' : MockJinjaEnv(),
           'chain' : None
           }
         }
@@ -140,6 +148,7 @@ class TestCheckpointLogin(object):
         'wsgi.input' : StringIO(post_str),
         'CONTENT_LENGTH' : len(post_str),
         'pythia' : {
+          'jinja_env' : MockJinjaEnv(),
           'chain' : check_user
           }
         }

@@ -43,9 +43,12 @@ class Checkpoint(object):
       session = self.auth_controller.get_session(sid,
           session_expiration=self.session_expiration)
       user = session.user
-    except (KeyError, NoSuchSession, SessionExpired), e:
+    except (NoSuchSession, SessionExpired), e:
       environ['hsr']['auth_except'] = e
       start_response.delete_cookie('sid')
+      return self.login_view(environ, start_response)
+    except KeyError, e:
+      environ['hsr']['auth_except'] = e
       try:
         data_len = int(environ.get('CONTENT_LENGTH', '0'))
       except ValueError:
@@ -59,7 +62,8 @@ class Checkpoint(object):
         user = session.user
         environ['hsr']['auth_except'] = None
         start_response.add_headers([('Set-Cookie', 'sid=' + session.session_id)])
-      except KeyError:
+      except (KeyError, WrongPassword, NoSuchUser), e:
+        environ['hsr']['auth_except'] = e
         return self.login_view(environ, start_response)
 
     environ['hsr']['user'] = user

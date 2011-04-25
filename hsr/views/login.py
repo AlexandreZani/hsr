@@ -12,10 +12,22 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from hsr.controller.auth import NoSuchUser, WrongPassword, SessionExpired
+
 def login(environ, start_response):
   status = "401 Unauthorized"
   template = environ['pythia']['jinja_env'].get_template("hsr/login.html")
-  data = template.render()
+
+  ex = type(environ['hsr']['auth_except'])
+
+  if ex is SessionExpired:
+    reason = "Session Expired"
+  elif ex is WrongPassword or ex is NoSuchUser:
+    reason = "Wrong Username Password Combination"
+  else:
+    reason = ""
+
+  data = template.render(reason=reason)
   response_headers = [
       ('Content-type','text/html'),
       ('Content-Length', str(len(data))),
