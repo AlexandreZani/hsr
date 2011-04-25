@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from hsr.model.user import User
+from hsr.model.user import User, Permissions
 
 class TestUser(object):
   def test_password(self):
@@ -27,3 +27,15 @@ class TestUser(object):
     user = User("username", "passrd")
     user.set_password("password")
     assert user.check_password("password")
+
+  def test_permissions(self):
+    user = User("username", "passrd")
+    assert Permissions.NONE == user.permissions
+    user = User("username", "passrd", Permissions.NONE)
+    assert Permissions.NONE == user.permissions
+    user = User("username", "passrd", Permissions.READ)
+    assert Permissions.READ == user.permissions
+    user = User("username", "passrd", Permissions.WRITE)
+    assert Permissions.WRITE == user.permissions
+    user = User("username", "passrd", Permissions.ADMIN)
+    assert Permissions.ADMIN== user.permissions

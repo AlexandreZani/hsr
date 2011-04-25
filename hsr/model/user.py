@@ -37,7 +37,7 @@ class User(Base):
   def __init__(self, username, password, permissions=Permissions.NONE):
     self.username = username
     self.set_password(password)
-    self.permissions = Permissions.NONE
+    self.permissions = permissions
 
   def set_password(self, password):
     self.password_salt = urandom(256/8)
