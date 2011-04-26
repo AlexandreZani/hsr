@@ -13,19 +13,22 @@
 #   limitations under the License.
 
 from hsr.model.meta import Base
+from hsr.model.site import Site
 from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship, backref
 
 class MuseumObject(Base):
   __tablename__ = 'museum_objects'
 
   catalogue_num = Column(String, primary_key=True)
   object_num = Column(Integer)
-  site = Column(ForeignKey('sites.id'))
+  site_id = Column(Integer, ForeignKey('sites.id'))
+  site = relationship(Site, backref=backref('users', order_by=catalogue_num))
 
-  def __init__(self, catalogue_id, object_num, site):
+  def __init__(self, catalogue_num, object_num, site_id):
     self.catalogue_num = catalogue_num
     self.object_num = object_num
-    self.site = site
+    self.site_id = site_id
 
   def __repr__(self):
     return "<MuseumObject (%s)>" % (self.catalogue_num,)

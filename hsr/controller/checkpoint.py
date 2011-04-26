@@ -15,12 +15,14 @@
 from paste.request import get_cookie_dict
 from hsr.controller.auth import *
 from hsr.controller.secure_auth import SecureAuthController
+from hsr.controller.secure_engine import SecureEngine
 import hsr.views.login
 from cgi import parse_qs, escape
 
 class Checkpoint(object):
   def __init__(self, engine, login_view=hsr.views.login,
       session_expiration=60*60):
+    self.engine = engine
     self.auth_controller = AuthController(engine)
     self.login_view = login_view
     self.session_expiration = session_expiration
@@ -70,6 +72,7 @@ class Checkpoint(object):
     environ['hsr']['session'] = session
     environ['hsr']['auth_controller'] = SecureAuthController(
         self.auth_controller, user)
+    environ['hsr']['db_engine'] = SecureEngine(self.engine, user)
     environ['pythia']['jinja_env'].add_context_variables(user=user)
 
     return environ['pythia']['chain'](environ, start_response)

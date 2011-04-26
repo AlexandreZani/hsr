@@ -19,4 +19,5 @@ view_paths = [
     ("/logout/", hsr.views.logout, ()),
     ("/change_password/", hsr.views.change_password, ()),
     ("/account_management/", hsr.views.static, ()),
+    ("/museum_objects/", hsr.views.museum_objects, ()),
 ]
