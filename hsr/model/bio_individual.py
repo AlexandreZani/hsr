@@ -27,7 +27,8 @@ class Sex(object):
 class BioIndividual(Base):
   __tablename__ = 'bio_individuals'
 
-  suffix_designation = Column(String, primary_key=True)
+  id = Column(Integer, primary_key=True)
+  suffix_designation = Column(String, unique=True)
   suffix = Column(String)
   sex = Column(Integer)
   age = Column(String)

@@ -20,7 +20,8 @@ from sqlalchemy.orm import relationship, backref
 class MuseumObject(Base):
   __tablename__ = 'museum_objects'
 
-  catalogue_num = Column(String, primary_key=True)
+  id = Column(Integer, primary_key=True)
+  catalogue_num = Column(String, unique=True)
   object_num = Column(Integer)
   site_id = Column(Integer, ForeignKey('sites.id'))
   site = relationship(Site, backref=backref('users', order_by=catalogue_num))
