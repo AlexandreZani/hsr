@@ -1,0 +1,45 @@
+{#
+   Copyright 2011 Alexandre Zani (Alexandre.Zani@gmail.com)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. 
+#}
+
+{% extends "hsr/base.html" %}
+{% block title %}Biological Individuals{% endblock %}
+{% block references %}
+<script type="text/javascript" src="/s/js/bio_individuals.js"></script>
+{% endblock %}
+{% block content %}
+<table>
+  <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th></tr>
+  {% for bio_individual in bio_individuals %}
+  <tr>
+    <td>{{ bio_individual.suffix_designation }}</td>
+    <td>{{ bio_individual.sex_str }}</td>
+    <td>{{ bio_individual.age }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% if  page > 0 %}
+<input type="button" value="<< First"
+  onClick="listBioIndividuals(0, {{ page_size }}, '{{ sort_by }}');" />
+<input type="button" value="< Previous"
+  onClick="listBioIndividuals({{ page - 1 }}, {{ page_size }}, '{{ sort_by }}');" />
+{% endif %}
+Page: {{ page + 1 }}
+{% if last is not defined %}
+<input type="button" value="Next >"
+  onClick="listBioIndividuals({{ page + 1 }}, {{ page_size }}, '{{ sort_by }}');" />
+{% endif %}
+{% endblock %}
+
