@@ -21,11 +21,10 @@
 {% endblock %}
 {% block content %}
 <table>
-  <tr><th>Object Number</th><th>Catalogue Number</th><th>Site</th></tr>
+  <tr><th>Museum Number</th><th>Site</th></tr>
   {% for museum_object in museum_objects %}
   <tr>
     <td>{{ museum_object.catalogue_num }}</td>
-    <td>{{ museum_object.object_num}}</td>
     <td>{{ museum_object.site.name }}</td>
   </tr>
   {% endfor %}
