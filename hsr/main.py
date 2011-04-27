@@ -20,6 +20,7 @@ from hsr.controller.auth import AuthController, DuplicateUsername
 from sqlalchemy import create_engine
 from hsr.views import login
 from hsr.urls import view_paths
+from hsr.model.user import Permissions
 
 class HSRInit(object):
   def __init__(self, engine):
@@ -36,7 +37,7 @@ Base.metadata.create_all(engine)
 
 auth_controller = AuthController(engine)
 try:
-  auth_controller.create_user("admin", "admin")
+  auth_controller.create_user("admin", "admin", Permissions.ADMIN)
 except DuplicateUsername:
   pass
 
