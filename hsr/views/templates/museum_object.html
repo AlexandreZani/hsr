@@ -15,29 +15,27 @@
 #}
 
 {% extends "hsr/base.html" %}
-{% block title %}Museum Objects{% endblock %}
+{% block title %}Museum Object{% endblock %}
 {% block references %}
 <script type="text/javascript" src="/s/js/museum_objects.js"></script>
 {% endblock %}
 {% block content %}
 <table>
-  <tr><th>Museum Number</th><th>Site</th></tr>
-  {% for museum_object in museum_objects %}
-  <tr onClick="window.location='/museum_object/{{ museum_object.id }}';">
+  <tr>
+    <td>Museum Number</td>
     <td>{{ museum_object.catalogue_num }}</td>
+  </tr>
+  <tr>
+    <td>Site</td>
     <td>{{ museum_object.site.name }}</td>
   </tr>
-  {% endfor %}
+  <tr>
+    <td>Biological Individuals</td>
+    <td>
+      {% for bio_individual in museum_object.bio_individuals %}
+      {{ bio_individual.suffix_designation }} <br />
+      {% endfor %}
+    </td>
+  </tr>
 </table>
-{% if  page > 0 %}
-<input type="button" value="<< First"
-  onClick="listMuseumObjects(0, {{ page_size }}, '{{ sort_by }}');" />
-<input type="button" value="< Previous"
-  onClick="listMuseumObjects({{ page - 1 }}, {{ page_size }}, '{{ sort_by }}');" />
-{% endif %}
-Page: {{ page + 1 }}
-{% if last is not defined %}
-<input type="button" value="Next >"
-  onClick="listMuseumObjects({{ page + 1 }}, {{ page_size }}, '{{ sort_by }}');" />
-{% endif %}
 {% endblock %}
