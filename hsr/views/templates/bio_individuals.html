@@ -21,12 +21,13 @@
 {% endblock %}
 {% block content %}
 <table>
-  <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th></tr>
+  <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th><th>Museum Number</th></tr>
   {% for bio_individual in bio_individuals %}
   <tr>
     <td>{{ bio_individual.suffix_designation }}</td>
     <td>{{ bio_individual.sex_str }}</td>
     <td>{{ bio_individual.age }}</td>
+    <td>{{ bio_individual.catalogue_num }}</td>
   </tr>
   {% endfor %}
 </table>
