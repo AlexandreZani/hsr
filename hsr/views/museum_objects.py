@@ -13,18 +13,53 @@
 #   limitations under the License.
 
 from hsr.model import MuseumObject
+from urlparse import parse_qs
 
 def museum_objects(environ, start_response):
+  params = parse_qs(environ['QUERY_STRING'])
+  
   engine = environ['hsr']['db_engine']
   session = engine.get_db_session()
 
-  museum_objects = session.query(MuseumObject).all()
+  context = {}
+
+  try:
+    sort_column = params['sort_by'][0]
+  except KeyError:
+    sort_column = 'catalogue_num'
+
+  context['sort_by'] = sort_column
+
+  try:
+    limit = int(params['page_size'][0])
+  except KeyError:
+    limit = 20
+
+  context['page_size'] = limit
+
+  try:
+    offset = int(params['page'][0]) * limit
+  except KeyError:
+    offset = 0
+
+  context['page'] = offset / limit
+
+  total = session.query(MuseumObject).count()
+
+  if offset + limit + 1 > total:
+    context['last'] = True
+
+  mos_q = session.query(MuseumObject).order_by(sort_column).offset(offset).limit(limit)
+  museum_objects = mos_q.all()
+
   status = "200 OK"
   template = environ['pythia']['jinja_env'].get_template("hsr/museum_objects.html")
-  data = template.render(museum_objects=museum_objects)
+  data = template.render(context, museum_objects=museum_objects)
   response_headers = [
       ('Content-type','text/html'),
       ('Content-Length', str(len(data))),
       ]
+
   start_response(status, response_headers)
+
   return iter([data])
