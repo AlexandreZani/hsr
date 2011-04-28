@@ -17,19 +17,20 @@
 <html>
   <head>
     <title>{% block title %}{% endblock %} - {{app_name}}</title>
+    <link rel="stylesheet" type="text/css" href="/s/css/base.css" />
     {% block references %}{% endblock references %}
   </head>
   <body>
+    {% block header %}
     <div id='header'>
-      {% block header %}
-      <h1>{{ self.title() }}</h1>
+      <h1>Human Skeletal Remains Database - {{ self.title() }}</h1>
       {%- if user -%}
-      <a href="/logout">Logout</a>
-      <a href="/main">Main Menu</a>
-      <a href="/account_management">Account Management</a>
+      <input type="button" value="Main Menu" onClick="window.location='/main'" />
+      <input type="button" value="Account Management" onClick="window.location='/account_management'" />
+      <input type="button" value="Logout" onClick="window.location='/logout'" />
       {% endif %}
-      {% endblock %}
     </div>
+    {% endblock %}
     <div id='content'>
       {% block content %}
       {% endblock %}

@@ -16,17 +16,29 @@
 
 {% extends "hsr/base.html" %}
 {% block title %}Login{% endblock %}
+{% block references %}
+<link rel="stylesheet" type="text/css" href="/s/css/forms.css" />
+{% endblock %}
 {% block content %}
 <form action="/main" method="post">
   <fieldset>
     <legend>Login</legend>
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username"/>
+    <ul>
+      <li>
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username"/>
+      </li>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password"/>
+      <li>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password"/>
+      </li>
 
-    <input type="submit" value="Login" />
+      <li>
+        <label for="submit" />
+        <input name="submit" id="submit" type="submit" value="Login" />
+      </li>
+    </ul>
   </fieldset>
 </form>
 <p>{{ reason }}</p>

@@ -19,27 +19,41 @@
 {% block references %}
 <script type="text/javascript" src="/s/js/common.js"></script>
 <script type="text/javascript" src="/s/js/change_password.js"></script>
+<link rel="stylesheet" type="text/css" href="/s/css/forms.css" />
 {% endblock %}
 {% block content %}
 <div id="change_password">
   <form>
     <fieldset>
       <legend>Change Password</legend>
-      <label for="old_password">Current Password</label>
-      <input type="password" name="old_password" id="old_password" />
+      <ul>
+        <li>
+          <label for="old_password">Current Password</label>
+          <input type="password" name="old_password" id="old_password" />
+        </li>
 
-      <label for="new_password">New Password</label>
-      <input type="password" name="new_password" id="new_password" onkeyup="passwordsMatch();" />
+        <li>
+          <label for="new_password">New Password</label>
+          <input type="password" name="new_password" id="new_password" onkeyup="passwordsMatch();" />
+        </li>
 
-      <label for="repeat_password">Confirm Password</label>
-      <input type="password" name="repeat_password" id="repeat_password" onkeyup="passwordsMatch();" />
+        <li>
+          <label for="repeat_password">Confirm Password</label>
+          <input type="password" name="repeat_password" id="repeat_password" onkeyup="passwordsMatch();" />
+        </li>
 
-      <input type="button" value="Change Password" id="change_password_btn" onclick="changePassword();" />
+        <li class="error" id="no_match" style="visibility:hidden;">
+          New password and confirmation password do not match!
+        </li>
+
+        <li id="response" />
+
+        <li>
+          <label for="change_password_btn" />
+         <input type="button" value="Change Password" name="change_password_btn" id="change_password_btn" onclick="changePassword();" />
+        </li>
+      </ul>
     </fieldset>
   </form>
-  <p id="no_match" style="visibility:hidden;">
-    New password and confirmation password do not match!
-  </p>
-  <p id="response" />
 </div>
 {% endblock %}
