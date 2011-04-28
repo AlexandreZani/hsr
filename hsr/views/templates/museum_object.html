@@ -32,9 +32,11 @@
   <tr>
     <td>Biological Individuals</td>
     <td>
+      <ul>
       {% for bio_individual in museum_object.bio_individuals %}
-      {{ bio_individual.suffix_designation }} <br />
+        <li onClick="window.location='/bio_individual/{{ bio_individual.id }}';">{{ bio_individual.suffix_designation }}</li>
       {% endfor %}
+      </ul>
     </td>
   </tr>
 </table>
