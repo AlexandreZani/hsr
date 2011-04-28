@@ -22,4 +22,5 @@ view_paths = [
     ("/museum_objects/", hsr.views.museum_objects, ()),
     ("/museum_object/(\d+)/", hsr.views.museum_object, ("id",)),
     ("/bio_individuals/", hsr.views.bio_individuals, ()),
+    ("/bio_individual/(\d+)/", hsr.views.bio_individual, ("id",)),
 ]

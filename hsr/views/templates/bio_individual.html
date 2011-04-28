@@ -15,32 +15,27 @@
 #}
 
 {% extends "hsr/base.html" %}
-{% block title %}Biological Individuals{% endblock %}
+{% block title %}Biological Individual{% endblock %}
 {% block references %}
-<script type="text/javascript" src="/s/js/bio_individuals.js"></script>
+<script type="text/javascript" src="/s/js/museum_objects.js"></script>
 {% endblock %}
 {% block content %}
 <table>
-  <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th><th>Museum Number</th></tr>
-  {% for bio_individual in bio_individuals %}
-  <tr onClick="window.location='/bio_individual/{{ bio_individual.id }}';">
+  <tr>
+    <td>Suffix Designation</td>
     <td>{{ bio_individual.suffix_designation }}</td>
+  </tr>
+  <tr>
+    <td>Sex</td>
     <td>{{ bio_individual.sex_str }}</td>
+  </tr>
+  <tr>
+    <td>Age</td>
     <td>{{ bio_individual.age }}</td>
+  </tr>
+  <tr>
+    <td>Museum Number</td>
     <td>{{ bio_individual.catalogue_num }}</td>
   </tr>
-  {% endfor %}
 </table>
-{% if  page > 0 %}
-<input type="button" value="<< First"
-  onClick="listBioIndividuals(0, {{ page_size }}, '{{ sort_by }}');" />
-<input type="button" value="< Previous"
-  onClick="listBioIndividuals({{ page - 1 }}, {{ page_size }}, '{{ sort_by }}');" />
-{% endif %}
-Page: {{ page + 1 }}
-{% if last is not defined %}
-<input type="button" value="Next >"
-  onClick="listBioIndividuals({{ page + 1 }}, {{ page_size }}, '{{ sort_by }}');" />
-{% endif %}
 {% endblock %}
-
