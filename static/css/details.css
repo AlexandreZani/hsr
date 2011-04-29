@@ -1,0 +1,10 @@
+table.details
+{
+}
+
+table.details th
+{
+  vertical-align: top;
+  text-align: right;
+  padding-right: 2em;
+}

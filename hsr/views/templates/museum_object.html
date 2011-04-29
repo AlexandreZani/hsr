@@ -18,25 +18,27 @@
 {% block title %}Museum Object{% endblock %}
 {% block references %}
 <script type="text/javascript" src="/s/js/museum_objects.js"></script>
+<link rel="stylesheet" type="text/css" href="/s/css/details.css" />
 {% endblock %}
 {% block content %}
-<table>
+<table class="details">
   <tr>
-    <td>Museum Number</td>
+    <th>Museum Number:</th>
     <td>{{ museum_object.catalogue_num }}</td>
   </tr>
   <tr>
-    <td>Site</td>
+    <th>Site:</th>
     <td>{{ museum_object.site.name }}</td>
   </tr>
   <tr>
-    <td>Biological Individuals</td>
+    <th>Biological Individuals:</th>
     <td>
-      <ul>
+      <table class="inner_table">
       {% for bio_individual in museum_object.bio_individuals %}
-        <li onClick="window.location='/bio_individual/{{ bio_individual.id }}';">{{ bio_individual.suffix_designation }}</li>
+        <tr onClick="window.location='/bio_individual/{{ bio_individual.id
+          }}';"><td>{{ bio_individual.suffix_designation }}</td></tr>
       {% endfor %}
-      </ul>
+      </table>
     </td>
   </tr>
 </table>
