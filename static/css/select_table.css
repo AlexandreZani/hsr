@@ -1,0 +1,24 @@
+table
+{
+  margin: 5px;
+}
+
+table,th,td
+{
+  border: 1px solid blue;
+  border-collapse: collapse;
+  padding: 5px;
+  text-align: right;
+}
+
+th
+{
+  background-color:#2A2F60;
+  color: white;
+  text-align: left;
+}
+
+tr.odd_row
+{
+  background-color: #CAD3F2;
+}

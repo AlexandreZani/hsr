@@ -18,12 +18,17 @@
 {% block title %}Biological Individuals{% endblock %}
 {% block references %}
 <script type="text/javascript" src="/s/js/bio_individuals.js"></script>
+<link rel="stylesheet" type="text/css" href="/s/css/select_table.css" />
 {% endblock %}
 {% block content %}
 <table>
   <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th><th>Museum Number</th></tr>
   {% for bio_individual in bio_individuals %}
-  <tr onClick="window.location='/bio_individual/{{ bio_individual.id }}';">
+  <tr onClick="window.location='/bio_individual/{{ bio_individual.id }}';"
+    class="{{ loop.cycle('odd_row', 'even_row') }}"
+    onMouseOver="this.setAttribute('style', 'background-color:#CAF3F2');"
+    onMouseOut="this.setAttribute('style', '');"
+    >
     <td>{{ bio_individual.suffix_designation }}</td>
     <td>{{ bio_individual.sex_str }}</td>
     <td>{{ bio_individual.age }}</td>
