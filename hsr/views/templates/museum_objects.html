@@ -21,7 +21,7 @@
 <link rel="stylesheet" type="text/css" href="/s/css/select_table.css" />
 {% endblock %}
 {% block content %}
-<table>
+<table class="select">
   <tr><th>Museum Number</th><th>Site</th></tr>
   {% for museum_object in museum_objects %}
   <tr onClick="window.location='/museum_object/{{ museum_object.id }}';"

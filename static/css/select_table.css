@@ -1,24 +1,25 @@
-table
+table.select
 {
   margin: 5px;
 }
 
-table,th,td
+table.select,table.select th,table.select td
 {
   border: 1px solid blue;
   border-collapse: collapse;
   padding: 5px;
   text-align: right;
+  vertical-align: top;
 }
 
-th
+table.select th
 {
   background-color:#2A2F60;
   color: white;
   text-align: left;
 }
 
-tr.odd_row
+table.select tr.odd_row
 {
   background-color: #CAD3F2;
 }

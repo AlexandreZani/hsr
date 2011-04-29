@@ -21,7 +21,7 @@
 <link rel="stylesheet" type="text/css" href="/s/css/select_table.css" />
 {% endblock %}
 {% block content %}
-<table>
+<table class="select">
   <tr><th>Suffix Designation</th><th>Sex</th><th>Age</th><th>Museum Number</th></tr>
   {% for bio_individual in bio_individuals %}
   <tr onClick="window.location='/bio_individual/{{ bio_individual.id }}';"
