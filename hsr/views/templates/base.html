@@ -18,6 +18,19 @@
   <head>
     <title>{% block title %}{% endblock %} - {{app_name}}</title>
     <link rel="stylesheet" type="text/css" href="/s/css/base.css" />
+    <script type="text/javascript" />
+      function getCurrentUser() {
+      {%- if user -%}
+        return {
+          'username' : '{{ user.username }}',
+          'permissions' : '{{ user.permissions }}',
+          'permissions_str' : '{{ user.permissions_str }}',
+        }
+      {% else %}
+        return null;
+      {% endif %}
+      }
+    </script>
     {% block references %}{% endblock references %}
   </head>
   <body>
