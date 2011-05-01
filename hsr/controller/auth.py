@@ -110,6 +110,15 @@ class AuthController(object):
 
     db_session.commit()
 
+  def set_permissions(self, username, new_permissions):
+    db_session = self._get_db_session()
+
+    user = self.get_user(username, db_session)
+
+    user.permissions = new_permissions
+
+    db_session.commit()
+
   def change_password(self, username, new_password):
     db_session = self._get_db_session()
 

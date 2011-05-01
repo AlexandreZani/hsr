@@ -12,7 +12,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from hsr.model import User
+from hsr.controller.auth import DuplicateUsername
+from hsr.model import User, Permissions
 from urlparse import parse_qs
 import json
 
@@ -35,12 +36,17 @@ def edit_user(environ, start_response):
   except KeyError:
     password = None
 
-  user = auth_controller.create_user(username, password, permissions)
+  try:
+    user = auth_controller.create_user(username, password, permissions)
+  except DuplicateUsername:
+    auth_controller.set_permissions(username, permissions)
+    if  password != None:
+      auth_controller.change_password(username=username, new_password=password)
 
   user_dict = {
-      'username' : user.username,
-      'permissions' : user.permissions,
-      'permissions_str' : user.permissions_str
+      'username' : username,
+      'permissions' : permissions,
+      'permissions_str' : Permissions.STRINGS[permissions]
       }
 
   user_json = json.dumps(user_dict)

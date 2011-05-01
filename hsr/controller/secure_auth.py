@@ -45,15 +45,22 @@ class SecureAuthController(object):
     else:
       raise InsufficientPermissions()
 
-  def change_password(self, old_password, new_password):
-    if not self._user.check_password(old_password):
-      raise InsufficientPermissions()
-
-    self._auth_controller.change_password(self._user.username, new_password)
+  def change_password(self, old_password=None, new_password=None, username=None):
+    if username == None:
+      if not self._user.check_password(old_password):
+        raise InsufficientPermissions()
+      self._auth_controller.change_password(self._user.username, new_password)
+    else:
+      self._check_permissions(Permissions.ADMIN)
+      self._auth_controller.change_password(username, new_password)
 
   def get_users(self):
     self._check_permissions(Permissions.ADMIN)
     return self._auth_controller.get_users()
+
+  def set_permissions(self, username, new_permissions):
+    self._check_permissions(Permissions.ADMIN)
+    return self._auth_controller.set_permissions(username, new_permissions)
 
   def create_user(self, username, password, permissions):
     self._check_permissions(Permissions.ADMIN)

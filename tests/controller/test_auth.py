@@ -73,6 +73,20 @@ class TestAuth(object):
     assert user.username == username
     assert user.check_password(new_pass)
 
+  def test_change_user_permission(self, auth_controller):
+    username = "name"
+    password = "pass"
+    new_permissions = Permissions.NONE
+
+    auth_controller.create_user(username, password, Permissions.ADMIN)
+
+    auth_controller.set_permissions(username, new_permissions)
+
+    user = auth_controller.get_user(username)
+
+    assert user.username == username
+    assert user.permissions == new_permissions
+
   def test_create_session(self, auth_controller):
     username = "name"
     password = "pass"
