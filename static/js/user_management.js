@@ -87,10 +87,12 @@ function saveUserCallback() {
 
     if (this.status == 200) {
       response_element.innerHTML = "Success";
+      response_element.setAttribute("class", "");
       var user = JSON.parse(this.responseText);
       updateTableWithUser(user);
     } else {
       response_element.innerHTML = this.statusText;
+      response_element.setAttribute("class", "error");
     }
   }
 }
