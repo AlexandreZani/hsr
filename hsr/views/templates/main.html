@@ -20,5 +20,8 @@
 <ul>
   <li><a href="/museum_objects/">Museum Numbers</a></li>
   <li><a href="/bio_individuals/">Biological Individuals</a></li>
+  {%- if user.permissions <= 0 -%}
+  <li><a href="/user_management/">User Management</a></li>
+  {% endif %}
 </ul>
 {% endblock %}

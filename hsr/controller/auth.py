@@ -118,3 +118,10 @@ class AuthController(object):
     user.set_password(new_password)
 
     db_session.commit()
+
+  def get_users(self):
+    db_session = self._get_db_session()
+
+    users = db_session.query(User).all()
+    
+    return users

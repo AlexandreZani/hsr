@@ -19,8 +19,10 @@ view_paths = [
     ("/logout/", hsr.views.logout, ()),
     ("/change_password/", hsr.views.change_password, ()),
     ("/account_management/", hsr.views.static, ()),
+    ("/user_management/", hsr.views.user_management, ()),
     ("/museum_objects/", hsr.views.museum_objects, ()),
     ("/museum_object/(\d+)/", hsr.views.museum_object, ("id",)),
     ("/bio_individuals/", hsr.views.bio_individuals, ()),
     ("/bio_individual/(\d+)/", hsr.views.bio_individual, ("id",)),
+    ("/edit_user/", hsr.views.edit_user, ()),
 ]

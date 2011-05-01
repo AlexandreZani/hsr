@@ -51,3 +51,13 @@ class SecureAuthController(object):
 
     self._auth_controller.change_password(self._user.username, new_password)
 
+  def get_users(self):
+    self._check_permissions(Permissions.ADMIN)
+    return self._auth_controller.get_users()
+
+  def create_user(self, username, password, permissions):
+    self._check_permissions(Permissions.ADMIN)
+    if password == None:
+      return None
+
+    return self._auth_controller.create_user(username, password, permissions)

@@ -1,0 +1,89 @@
+{#
+   Copyright 2011 Alexandre Zani (Alexandre.Zani@gmail.com)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. 
+#}
+
+{% extends "hsr/base.html" %}
+{% block title %}User Management{% endblock %}
+{% block references %}
+<link rel="stylesheet" type="text/css" href="/s/css/select_table.css" />
+<link rel="stylesheet" type="text/css" href="/s/css/forms.css" />
+<script type="text/javascript" src="/s/js/common.js"></script>
+<script type="text/javascript" src="/s/js/user_management.js"></script>
+{% endblock %}
+{% block content %}
+<div id="edit_user">
+  <form>
+    <fieldset>
+      <legend id="edit_user_legend">New User</legend>
+      <ul>
+        <li>
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username"/>
+        </li>
+        <li>
+          <label for="permissions">Permissions</label>
+          <select name="permissions" id="permissions">
+            <option value="128">None</option>
+            <option value="64">Read</option>
+            <option value="32">Write</option>
+            <option value="0">Admin</option>
+          </select>
+        </li>
+        <li>
+          <label for="new_password">New Password</label>
+          <input type="password" name="new_password" id="new_password" onkeyup="passwordsMatch();" />
+        </li>
+        <li>
+          <label for="repeat_password">Confirm Password</label>
+          <input type="password" name="repeat_password" id="repeat_password" onkeyup="passwordsMatch();" />
+        </li>
+
+        <li class="error" id="no_match" style="visibility:hidden;">
+          New password and confirmation password do not match!
+        </li>
+        <li>
+          <input type="button" value="Save User" name="save_user_btn"
+            id="save_user_btn" onClick="saveUser()"/>
+          <input type="button" value="Delete" name="delete_user_btn"
+            id="delete_user_btn" onClick="deleteUser()"
+            style="display:none;"/>
+          <input type="button" value="Cancel" name="cancel_btn"
+            id="cancel_btn" onClick="cancelEditUser();" />
+        </li>
+        <li class="error" id="response">
+        </li>
+      </ul>
+      <input type="hidden" name="old_username" id="old_username" value="" />
+    </fieldset>
+</form>
+</div>
+<div id="user_list">
+  <table id="user_table" class="select">
+    <tr><th>Username</th><th>Permissions</th></tr>
+    {% for user in users %}
+    <tr
+      id="user_{{ user.username }}"
+      onClick="editUser('{{ user.username }}', '{{ user.permissions }}');"
+      class="{{ loop.cycle('odd_row', 'even_row') }}"
+      onMouseOver="this.setAttribute('style', 'background-color:#CAF3F2');"
+      onMouseOut="this.setAttribute('style', '');"
+      >
+      <td>{{ user.username }}</td>
+      <td>{{ user.permissions_str }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

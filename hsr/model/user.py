@@ -26,6 +26,13 @@ class Permissions(object):
   WRITE = 32
   ADMIN = 0
 
+  STRINGS = {
+      NONE : "None",
+      READ : "Read",
+      WRITE: "Write",
+      ADMIN: "Admin"
+      }
+
 class User(Base):
   __tablename__ = 'users'
 
@@ -42,6 +49,10 @@ class User(Base):
   def set_password(self, password):
     self.password_salt = urandom(256/8)
     self.salted_password = self._salt_password(self.password_salt, password)
+
+  @property
+  def permissions_str(self):
+    return Permissions.STRINGS[self.permissions]
 
   def check_password(self, password):
     return self.salted_password == self._salt_password(self.password_salt, password)

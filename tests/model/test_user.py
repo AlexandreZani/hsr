@@ -31,11 +31,16 @@ class TestUser(object):
   def test_permissions(self):
     user = User("username", "passrd")
     assert Permissions.NONE == user.permissions
+    assert "None" == user.permissions_str
     user = User("username", "passrd", Permissions.NONE)
     assert Permissions.NONE == user.permissions
+    assert "None" == user.permissions_str
     user = User("username", "passrd", Permissions.READ)
     assert Permissions.READ == user.permissions
+    assert "Read" == user.permissions_str
     user = User("username", "passrd", Permissions.WRITE)
     assert Permissions.WRITE == user.permissions
+    assert "Write" == user.permissions_str
     user = User("username", "passrd", Permissions.ADMIN)
     assert Permissions.ADMIN== user.permissions
+    assert "Admin" == user.permissions_str

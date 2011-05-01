@@ -51,6 +51,14 @@ class TestAuth(object):
     with pytest.raises(DuplicateUsername):
       auth_controller.create_user(username, password, Permissions.ADMIN)
 
+  def test_get_users(self, auth_controller):
+    u1 = auth_controller.create_user("user1", "pass", Permissions.NONE)
+    u2 = auth_controller.create_user("user2", "pass", Permissions.ADMIN)
+
+    users = map(lambda user: user.username, auth_controller.get_users())
+    assert u1.username in users
+    assert u2.username in users
+
   def test_change_password(self, auth_controller):
     username = "name"
     password = "pass"
