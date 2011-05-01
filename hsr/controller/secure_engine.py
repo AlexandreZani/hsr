@@ -18,7 +18,7 @@ from hsr.controller.secure_auth import InsufficientPermissions
 
 class SecureEngine(object):
   def __init__(self, engine, user):
-    self._db_session_class = sessionmaker(bind=engine)
+    self._db_session_class = sessionmaker(bind=engine, expire_on_commit=False)
     self._user = user
 
   def _check_permissions(self, min_permissions=Permissions.ADMIN):

@@ -82,7 +82,7 @@ class TestSecureDBSession(object):
       dbs.commit()
 
   def test_read_only(self, engine):
-    SessionClass = sessionmaker(bind=engine)
+    SessionClass = sessionmaker(bind=engine, expire_on_commit=False)
     s = SessionClass()
 
     catalogue_num = "cat_id"

@@ -26,7 +26,7 @@ class SessionExpired(Exception): pass
 
 class AuthController(object):
   def __init__(self, engine):
-    self._db_session_class = sessionmaker(bind=engine)
+    self._db_session_class = sessionmaker(bind=engine, expire_on_commit=False)
 
   def _get_db_session(self):
     return self._db_session_class()
