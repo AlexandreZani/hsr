@@ -42,6 +42,17 @@ class TestAuth(object):
     assert user.username == username
     assert user.check_password(password)
 
+  def test_delete_user(self, auth_controller):
+    username = "name"
+    password = "pass"
+
+    auth_controller.create_user(username, password, Permissions.ADMIN)
+
+    auth_controller.delete_user(username)
+
+    with pytest.raises(NoSuchUser):
+      auth_controller.get_user(username)
+
   def test_create_duplicate_user(self, auth_controller):
     username = "name"
     password = "pass"

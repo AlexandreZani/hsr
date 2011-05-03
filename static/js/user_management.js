@@ -121,4 +121,51 @@ function updateTableWithUser(user) {
 }
 
 function deleteUser() {
+  var username = document.getElementById("username").value;
+
+  var current_user = getCurrentUser();
+  if (current_user.username == username) {
+    alert("You cannot delete your own account.");
+    return;
+  }
+  request = getXMLHttpRequest();
+  request.onreadystatechange = deleteUserCallback;
+
+  var request_str = "username=" + username;
+  request.open("POST", "/delete_user", true);
+  request.send(request_str);
+}
+
+function deleteUserCallback() {
+  if (this.readyState == 4) {
+    var response_element = document.getElementById("response");
+
+    if (this.status == 200) {
+      response_element.innerHTML = "Success";
+      response_element.setAttribute("class", "");
+      var username = this.responseText;
+      deleteUserFromTable(username);
+    } else {
+      response_element.innerHTML = this.statusText;
+      response_element.setAttribute("class", "error");
+    }
+  }
+}
+
+function deleteUserFromTable(username) {
+  var table = document.getElementById("user_table");
+
+  for (var row = 1; row < table.rows.length; row++) {
+    if (table.rows[row].id == "user_" + username) {
+      table.deleteRow(row);
+    }
+
+    if (row % 2 == 0) {
+      table.rows[row].setAttribute("class", "even_row");
+    } else {
+      table.rows[row].setAttribute("class", "odd_row");
+    }
+  }
+
+  cancelEditUser();
 }

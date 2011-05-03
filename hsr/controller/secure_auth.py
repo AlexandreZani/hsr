@@ -58,6 +58,10 @@ class SecureAuthController(object):
     self._check_permissions(Permissions.ADMIN)
     return self._auth_controller.get_users()
 
+  def delete_user(self, username):
+    self._check_permissions(Permissions.ADMIN)
+    return self._auth_controller.delete_user(username)
+
   def set_permissions(self, username, new_permissions):
     self._check_permissions(Permissions.ADMIN)
     return self._auth_controller.set_permissions(username, new_permissions)

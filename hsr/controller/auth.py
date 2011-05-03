@@ -128,6 +128,14 @@ class AuthController(object):
 
     db_session.commit()
 
+  def delete_user(self, username):
+    db_session = self._get_db_session()
+
+    user = db_session.query(User).filter(User.username==username).delete()
+    self.delete_sessions(username)
+
+    db_session.commit()
+
   def get_users(self):
     db_session = self._get_db_session()
 

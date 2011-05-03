@@ -8,3 +8,4 @@ from hsr.views.bio_individuals import bio_individuals
 from hsr.views.bio_individual import bio_individual
 from hsr.views.user_management import user_management 
 from hsr.views.edit_user import edit_user
+from hsr.views.delete_user import delete_user
