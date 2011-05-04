@@ -22,16 +22,6 @@ from hsr.views import login
 from hsr.urls import view_paths
 from hsr.model.user import Permissions
 
-class HSRInit(object):
-  def __init__(self, engine):
-    self.engine = engine
-  
-  def __call__(self, environ, start_response):
-    environ['hsr'] = {
-        'db_engine' : self.engine,
-        }
-    return environ['pythia']['chain'](environ, start_response)
-
 engine = create_engine(settings.db_url)
 Base.metadata.create_all(engine)
 
@@ -44,9 +34,6 @@ except DuplicateUsername:
 settings.view_paths = view_paths
 
 settings.pre_views = []
-hsr_init = HSRInit(engine)
-settings.pre_views.append(hsr_init)
-
 checkpoint = Checkpoint(engine, login, settings.session_expiration)
 settings.pre_views.append(checkpoint)
 
