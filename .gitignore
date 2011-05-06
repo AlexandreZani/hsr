@@ -1,5 +1,6 @@
 *.pyc
 *.egg-info/
 test_db.db
+test_db.db-journal
 .*.swp
 tmp/
