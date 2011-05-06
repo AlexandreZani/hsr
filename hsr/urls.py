@@ -26,4 +26,5 @@ view_paths = [
     ("/bio_individual/(\d+)/", hsr.views.bio_individual, ("id",)),
     ("/edit_user/", hsr.views.edit_user, ()),
     ("/delete_user/", hsr.views.delete_user, ()),
+    ("/edit_bio/", hsr.views.edit_bio, ()),
 ]

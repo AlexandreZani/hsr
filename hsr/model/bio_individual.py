@@ -54,3 +54,16 @@ class BioIndividual(Base):
 
   def __repr__(self):
     return "<BioIndividual (%s)>" % (self.suffix_designation)
+
+  def to_dict(self):
+    return {
+        'suffix_designation' : self.suffix_designation,
+        'suffix' : self.suffix,
+        'sex' : self.sex,
+        'sex_str' : self.sex_str,
+        'age' : self.age,
+        'age_min' : self.age_min,
+        'age_max' : self.age_max,
+        'catalogue_num' : self.catalogue_num,
+        'museum_object_id' : self.museum_object.id,
+        }

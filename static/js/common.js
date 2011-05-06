@@ -21,3 +21,9 @@ function getXMLHttpRequest() {
     return new ActiveXObject("Microsoft.XMLHTTP");
   }
 }
+
+function setAttributeOfMany(ids, attribute, value) {
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById(ids[i]).setAttribute(attribute, value);
+  }
+}

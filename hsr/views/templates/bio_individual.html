@@ -17,7 +17,22 @@
 {% extends "hsr/base.html" %}
 {% block title %}Biological Individual{% endblock %}
 {% block references %}
+<script type="text/javascript" />
+  var cur_bio_individual = {
+    'suffix_designation' : '{{ bio_individual.suffix_designation }}',
+    'suffix' : '{{ bio_individual.suffix }}',
+    'sex' : '{{ bio_individual.sex }}',
+    'sex_str' : '{{ bio_individual.sex_str }}',
+    'age' : '{{ bio_individual.age }}',
+    'age_max' : {{ bio_individual.age_max }},
+    'age_min' : {{ bio_individual.age_min }},
+    'catalogue_num' : '{{ bio_individual.catalogue_num }}',
+    'museum_object_id' : {{ bio_individual.museum_object.id }},
+  };
+</script>
+<script type="text/javascript" src="/s/js/common.js"></script>
 <script type="text/javascript" src="/s/js/museum_objects.js"></script>
+<script type="text/javascript" src="/s/js/bio_individual.js"></script>
 <link rel="stylesheet" type="text/css" href="/s/css/details.css" />
 {% endblock %}
 {% block content %}
@@ -28,15 +43,35 @@
   </tr>
   <tr>
     <th>Sex</th>
-    <td>{{ bio_individual.sex_str }}</td>
+    <td id="sex_static">{{ bio_individual.sex_str }}</td>
+    <td style="display:none" id="sex_field_td">
+      <select id="sex_field">
+        <option value="0">Male</option>
+        <option value="1">Female</option>
+        <option value="2">N/A</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <th>Age</th>
-    <td>{{ bio_individual.age }}</td>
+    <td id="age_static">{{ bio_individual.age }}</td>
+    <td style="display:none" id="age_field_td"><input type="text" id="age_field" /></td>
   </tr>
-  <tr onClick="window.location='/museum_object/{{ bio_individual.museum_object.id }}';">
+  <tr >
     <th>Museum Number</th>
-    <td>{{ bio_individual.catalogue_num }}</td>
+    <td id="catalogue_number_static"
+      onClick="window.location='/museum_object/{{ bio_individual.museum_object.id }}';">
+      {{ bio_individual.catalogue_num }}</td>
+
+    <td style="display:none" id="catalogue_number_field_td">
+      <input type="text" id="catalogue_number_field" />
+    </td>
   </tr>
 </table>
+{%- if user.permissions <= Permissions.WRITE -%}
+<input type="button" value="Edit" id="edit_btn" onClick="startEdit();" />
+<input type="button" value="Save" id="save_btn" style="display:none" onClick="saveBioIndividual();"/>
+<input type="button" value="Cancel" id="cancel_btn" style="display:none" onClick="cancelEdit();" />
+<p class="error" id="response" />
+{% endif %}
 {% endblock %}
