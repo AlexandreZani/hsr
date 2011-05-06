@@ -71,6 +71,7 @@
 {%- if user.permissions <= Permissions.WRITE -%}
 <input type="button" value="Edit" id="edit_btn" onClick="startEdit();" />
 <input type="button" value="Save" id="save_btn" style="display:none" onClick="saveBioIndividual();"/>
+<input type="button" value="Delete" id="delete_btn" onClick="deleteBio();" />
 <input type="button" value="Cancel" id="cancel_btn" style="display:none" onClick="cancelEdit();" />
 <p class="error" id="response" />
 {% endif %}

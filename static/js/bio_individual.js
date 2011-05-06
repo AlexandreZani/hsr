@@ -45,7 +45,6 @@ function saveBioIndividual() {
   request_str += "&catalogue_number=" + escape(document.getElementById('catalogue_number_field').value);
   request.open("POST", "/edit_bio", true);
   request.send(request_str);
-  console.log(request_str);
 }
 
 function saveBioIndividualCallback() {
@@ -57,15 +56,39 @@ function saveBioIndividualCallback() {
       response_element.setAttribute("class", "");
       window.cur_bio_individual = JSON.parse(this.responseText);
       cancelEdit();
-      console.log(window.cur_bio_individual.age);
       document.getElementById('age_static').innerHTML = window.cur_bio_individual.age;
       document.getElementById('sex_static').innerHTML = window.cur_bio_individual.sex_str;
       document.getElementById('catalogue_number_static').innerHTML = window.cur_bio_individual.catalogue_num;
-      console.log(window.cur_bio_individual.museum_object_id);
       document.getElementById('catalogue_number_static').setAttribute("onclick",
         "window.location='/museum_object/" +
         window.cur_bio_individual.museum_object_id + "';");
     } else {
+      response_element.innerHTML = this.statusText;
+      response_element.setAttribute("class", "error");
+    }
+  }
+}
+
+function deleteBio() {
+  var sure = confirm("You are about to permanently delete this biological individual from the database. This operation may not be undone. Are you sure you want to continue?");
+  if (! sure) {
+    return;
+  }
+
+  request = getXMLHttpRequest();
+  request.onreadystatechange = deleteBioCallback;
+
+  request.open("POST", "/delete_bio", true);
+  request.send("suffix_designation=" + escape(window.cur_bio_individual.suffix_designation));
+}
+
+function deleteBioCallback() {
+  if (this.readyState == 4) {
+    if (this.status == 200) {
+      alert("Success");
+      history.back();
+    } else {
+      var response_element = document.getElementById("response");
       response_element.innerHTML = this.statusText;
       response_element.setAttribute("class", "error");
     }
