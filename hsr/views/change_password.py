@@ -24,7 +24,7 @@ def change_password(environ, start_response):
   status = "200 OK"
 
   try:
-    environ['hsr']['auth_controller'].change_password(data_dict['old_password'][0],
+    environ['hsr']['auth_controller'].change_own_password(data_dict['old_password'][0],
         data_dict['new_password'][0])
   except InsufficientPermissions:
     status = "401 Incorrect Old Password"

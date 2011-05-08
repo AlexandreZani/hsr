@@ -14,20 +14,15 @@
 
 from sqlalchemy.orm import sessionmaker
 from hsr.model.user import Permissions
-from hsr.controller.secure_auth import InsufficientPermissions
+from hsr.controller.secure import InsufficientPermissions, secure
 
 class SecureEngine(object):
   def __init__(self, engine, user):
     self._db_session_class = sessionmaker(bind=engine, expire_on_commit=False)
     self._user = user
 
-  def _check_permissions(self, min_permissions=Permissions.ADMIN):
-    if min_permissions < self._user.permissions:
-      raise InsufficientPermissions()
-    return True
-
+  @secure(Permissions.READ)
   def get_db_session(self):
-    self._check_permissions(Permissions.READ)
     return SecureDBSession(self._db_session_class(), self._user)
 
 class SecureDBSession(object):
@@ -35,23 +30,18 @@ class SecureDBSession(object):
     self._db_session = db_session
     self._user = user
 
-  def _check_permissions(self, min_permissions=Permissions.ADMIN):
-    if min_permissions < self._user.permissions:
-      raise InsufficientPermissions()
-    return True
-
+  @secure(Permissions.WRITE)
   def add_all(self, *args, **kwargs):
-    self._check_permissions(Permissions.WRITE)
     return self._db_session.add_all(*args, **kwargs)
 
+  @secure(Permissions.WRITE)
   def add(self, *args, **kwargs):
-    self._check_permissions(Permissions.WRITE)
     return self._db_session.add(*args, **kwargs)
 
+  @secure(Permissions.WRITE)
   def commit(self, *args, **kwargs):
-    self._check_permissions(Permissions.WRITE)
     return self._db_session.commit(*args, **kwargs)
 
+  @secure(Permissions.READ)
   def query(self, *args, **kwargs):
-    self._check_permissions(Permissions.READ)
     return self._db_session.query(*args, **kwargs)
