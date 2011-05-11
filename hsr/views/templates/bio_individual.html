@@ -27,7 +27,11 @@
     'age_max' : {{ bio_individual.age_max }},
     'age_min' : {{ bio_individual.age_min }},
     'catalogue_num' : '{{ bio_individual.catalogue_num }}',
+    {%- if bio_individual.museum_object -%}
     'museum_object_id' : {{ bio_individual.museum_object.id }},
+    {%- else -%}
+    'museum_object_id' : '',
+    {%- endif -%}
   };
 </script>
 <script type="text/javascript" src="/s/js/common.js"></script>
@@ -35,11 +39,23 @@
 <script type="text/javascript" src="/s/js/bio_individual.js"></script>
 <link rel="stylesheet" type="text/css" href="/s/css/details.css" />
 {% endblock %}
+{% block onload %}
+{%- if new_bio_individual -%}
+startNew();
+{%- endif -%}
+{% endblock %}
 {% block content %}
 <table class="details">
   <tr>
     <th>Suffix Designation</th>
-    <td>{{ bio_individual.suffix_designation }}</td>
+    <td id="suffix_designation_static">{{ bio_individual.suffix_designation }}</td>
+    <td id="suffix_designation_field_td" style="display:none">
+      <input type="text" id="suffix_designation_field" />
+    </td>
+  </tr>
+  <tr style="display:none" id="suffix_field_tr">
+    <th>Suffix</th>
+    <td><input type="text" id="suffix_field" /></td>
   </tr>
   <tr>
     <th>Sex</th>
@@ -57,12 +73,19 @@
     <td id="age_static">{{ bio_individual.age }}</td>
     <td style="display:none" id="age_field_td"><input type="text" id="age_field" /></td>
   </tr>
+  <tr style="display:none" id="age_min_field_tr">
+    <th>Minimum Age</th>
+    <td><input type="text" id="age_min_field" /></td>
+  </tr>
+  <tr style="display:none" id="age_max_field_tr">
+    <th>Maximum Age</th>
+    <td><input type="text" id="age_max_field" /></td>
+  </tr>
   <tr >
     <th>Museum Number</th>
     <td id="catalogue_number_static"
       onClick="window.location='/museum_object/{{ bio_individual.museum_object.id }}';">
       {{ bio_individual.catalogue_num }}</td>
-
     <td style="display:none" id="catalogue_number_field_td">
       <input type="text" id="catalogue_number_field" />
     </td>
@@ -70,7 +93,8 @@
 </table>
 {%- if user.permissions <= Permissions.WRITE -%}
 <input type="button" value="Edit" id="edit_btn" onClick="startEdit();" />
-<input type="button" value="Save" id="save_btn" style="display:none" onClick="saveBioIndividual();"/>
+<input type="button" value="Save" id="save_btn" style="display:none"
+onClick="saveBioIndividual();" />
 <input type="button" value="Delete" id="delete_btn" onClick="deleteBio();" />
 <input type="button" value="Cancel" id="cancel_btn" style="display:none" onClick="cancelEdit();" />
 <p class="error" id="response" />

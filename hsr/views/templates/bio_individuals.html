@@ -16,6 +16,10 @@
 
 {% extends "hsr/base.html" %}
 {% block title %}Biological Individuals{% endblock %}
+{% block menu %}
+<input type="button" value="New Individual"
+onClick="window.location='/bio_individual/'"/>
+{% endblock %}
 {% block references %}
 <script type="text/javascript" src="/s/js/bio_individuals.js"></script>
 <link rel="stylesheet" type="text/css" href="/s/css/select_table.css" />
@@ -48,4 +52,3 @@ Page: {{ page + 1 }}
   onClick="listBioIndividuals({{ page + 1 }}, {{ page_size }}, '{{ sort_by }}');" />
 {% endif %}
 {% endblock %}
-

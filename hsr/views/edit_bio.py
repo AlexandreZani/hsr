@@ -25,7 +25,10 @@ def edit_bio(environ, start_response):
   params = parse_qs(environ['wsgi.input'].read(data_len))
 
   suffix_design = params["suffix_designation"][0]
+  suffix = params["suffix"][0]
   age = params["age"][0]
+  age_min = params["age_min"][0]
+  age_max = params["age_max"][0]
   sex = int(params["sex"][0])
   catalogue_num = params["catalogue_number"][0]
 
@@ -33,10 +36,17 @@ def edit_bio(environ, start_response):
   session = engine.get_db_session()
 
   bio_indiv = session.query(BioIndividual).filter(BioIndividual.suffix_designation==suffix_design).first()
-
-  bio_indiv.age = age
-  bio_indiv.sex = sex
-  bio_indiv.catalogue_num = catalogue_num
+  if bio_indiv:
+    bio_indiv.age = age
+    bio_indiv.age_max = age_max
+    bio_indiv.age_min = age_min
+    bio_indiv.suffix = suffix
+    bio_indiv.sex = sex
+    bio_indiv.catalogue_num = catalogue_num
+  else:
+    bio_indiv = BioIndividual(suffix_design, suffix, sex, age, age_max,
+        age_min, catalogue_num)
+    session.add(bio_indiv)
 
   session.commit()
 

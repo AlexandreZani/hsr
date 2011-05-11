@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-function startEdit() {
-  var enabled = ['sex_field_td', 'age_field_td', 'catalogue_number_field_td',
-      'save_btn', 'cancel_btn'];
-  var disabled = ['sex_static', 'age_static', 'catalogue_number_static', 'edit_btn'];
+function startNew() {
+  startEdit();
+  var enabled = ['suffix_designation_field_td'];
+  var disabled = ['suffix_designation_static', 'delete_btn', 'cancel_btn'];
   setAttributeOfMany(enabled, 'style', '');
   setAttributeOfMany(disabled, 'style', 'display:none');
+}
+
+function startEdit() {
+  var enabled = ['sex_field_td', 'age_field_td', 'catalogue_number_field_td',
+      'save_btn', 'cancel_btn', 'age_min_field_tr', 'age_max_field_tr',
+      'suffix_field_tr'];
+  var disabled = ['sex_static', 'age_static', 'catalogue_number_static',
+      'edit_btn'];
+  setAttributeOfMany(enabled, 'style', '');
+  setAttributeOfMany(disabled, 'style', 'display:none');
+  document.getElementById('suffix_field').value = window.cur_bio_individual.suffix;
+  document.getElementById('suffix_designation_field').value =
+    window.cur_bio_individual.suffix_designation;
   document.getElementById('age_field').value = window.cur_bio_individual.age;
+  document.getElementById('age_max_field').value = window.cur_bio_individual.age_max;
+  document.getElementById('age_min_field').value = window.cur_bio_individual.age_min;
   document.getElementById('sex_field').value = window.cur_bio_individual.sex;
   document.getElementById('catalogue_number_field').value = window.cur_bio_individual.catalogue_num;
   document.getElementById('catalogue_number_field').onClick = "";
@@ -28,8 +43,10 @@ function startEdit() {
 
 function cancelEdit() {
   var disabled = ['sex_field_td', 'age_field_td', 'catalogue_number_field_td',
-      'save_btn', 'cancel_btn'];
-  var enabled = ['sex_static', 'age_static', 'catalogue_number_static', 'edit_btn'];
+      'save_btn', 'cancel_btn', 'age_min_field_tr', 'age_max_field_tr',
+      'suffix_field_tr', 'suffix_designation_field_td'];
+  var enabled = ['sex_static', 'age_static', 'catalogue_number_static',
+      'edit_btn', 'suffix_designation_static'];
   setAttributeOfMany(enabled, 'style', '');
   setAttributeOfMany(disabled, 'style', 'display:none');
   document.getElementById('catalogue_number_field').onClick = "window.location=" + window.cur_bio_individual.catalogue_num;
@@ -39,8 +56,12 @@ function saveBioIndividual() {
   request = getXMLHttpRequest();
   request.onreadystatechange = saveBioIndividualCallback;
 
-  var request_str = "suffix_designation=" + escape(cur_bio_individual.suffix_designation);
+  var request_str = "suffix_designation=" +
+    escape(document.getElementById('suffix_designation_field').value); 
+  request_str += "&suffix=" + escape(document.getElementById('suffix_field').value); 
   request_str += "&age=" + escape(document.getElementById('age_field').value);
+  request_str += "&age_max=" + escape(document.getElementById('age_max_field').value);
+  request_str += "&age_min=" + escape(document.getElementById('age_min_field').value);
   request_str += "&sex=" + escape(document.getElementById('sex_field').value);
   request_str += "&catalogue_number=" + escape(document.getElementById('catalogue_number_field').value);
   request.open("POST", "/edit_bio", true);
@@ -56,6 +77,8 @@ function saveBioIndividualCallback() {
       response_element.setAttribute("class", "");
       window.cur_bio_individual = JSON.parse(this.responseText);
       cancelEdit();
+      document.getElementById('suffix_designation_static').innerHTML =
+        window.cur_bio_individual.suffix_designation;
       document.getElementById('age_static').innerHTML = window.cur_bio_individual.age;
       document.getElementById('sex_static').innerHTML = window.cur_bio_individual.sex_str;
       document.getElementById('catalogue_number_static').innerHTML = window.cur_bio_individual.catalogue_num;

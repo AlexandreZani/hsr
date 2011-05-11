@@ -56,6 +56,10 @@ class BioIndividual(Base):
     return "<BioIndividual (%s)>" % (self.suffix_designation)
 
   def to_dict(self):
+    try:
+      museum_object_id = self.museum_object.id
+    except AttributeError:
+      museum_object_id = ''
     return {
         'suffix_designation' : self.suffix_designation,
         'suffix' : self.suffix,
@@ -65,5 +69,5 @@ class BioIndividual(Base):
         'age_min' : self.age_min,
         'age_max' : self.age_max,
         'catalogue_num' : self.catalogue_num,
-        'museum_object_id' : self.museum_object.id,
+        'museum_object_id' : museum_object_id,
         }

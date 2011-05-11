@@ -18,13 +18,17 @@ def bio_individual(environ, start_response):
   engine = environ['hsr']['db_engine']
   session = engine.get_db_session()
 
-  bi_id = environ['pythia']['url_params']['id']
-
-  bio_individual = session.query(BioIndividual).filter_by(id=bi_id).first()
+  try:
+    bi_id = environ['pythia']['url_params']['id']
+    bio_individual = session.query(BioIndividual).filter_by(id=bi_id).first()
+    new = False
+  except KeyError:
+    bio_individual = BioIndividual("", "", 0, "", 0, 0, "")
+    new = True
 
   status = "200 OK"
   template = environ['pythia']['jinja_env'].get_template("hsr/bio_individual.html")
-  data = template.render(bio_individual=bio_individual)
+  data = template.render(bio_individual=bio_individual, new_bio_individual=new)
   response_headers = [
       ('Content-type','text/html'),
       ('Content-Length', str(len(data))),
