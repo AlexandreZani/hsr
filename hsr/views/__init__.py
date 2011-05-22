@@ -10,4 +10,5 @@ from hsr.views.user_management import user_management
 from hsr.views.edit_user import edit_user
 from hsr.views.delete_user import delete_user
 from hsr.views.edit_bio import edit_bio
+from hsr.views.edit_museum_object import edit_museum_object
 from hsr.views.delete_bio import delete_bio

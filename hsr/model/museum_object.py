@@ -33,3 +33,16 @@ class MuseumObject(Base):
 
   def __repr__(self):
     return "<MuseumObject (%s)>" % (self.catalogue_num,)
+
+  def to_dict(self):
+    try:
+      site_name = self.site.name
+    except AttributeError:
+      site_name = ''
+
+    return {
+        'catalogue_num' : self.catalogue_num,
+        'object_num' : self.object_num,
+        'site_id' : self.site_id,
+        'site_name' : site_name,
+        }

@@ -33,16 +33,16 @@
 <table class="details">
   <tr>
     <th>Museum Number:</th>
-    <td>{{ museum_object.catalogue_num }}</td>
+    <td id="museum_num_static">{{ museum_object.catalogue_num }}</td>
     <td style="display:none" id="catalogue_num_field_td">
       <input id="catalogue_num_field" type="text" />
     </td>
   </tr>
   <tr>
     <th>Site:</th>
-    <td>{{ museum_object.site.name }}</td>
+    <td id="site_static_td">{{ museum_object.site.name }}</td>
     <td style="display:none" id="site_field_td">
-      <input id="site_field" type="text" />
+      <input id="site_id_field" type="text" />
     </td>
   </tr>
   <tr style="display:none" id="object_number_field_tr">
@@ -65,7 +65,7 @@
 {%- if user.permissions <= Permissions.WRITE -%}
 <input type="button" value="Edit" id="edit_btn" onClick="startEdit();" />
 <input type="button" value="Save" id="save_btn" style="display:none"
-onClick="saveBioIndividual();" />
+onClick="saveMuseumObject();" />
 <input type="button" value="Delete" id="delete_btn" onClick="deleteBio();" />
 <input type="button" value="Cancel" id="cancel_btn" style="display:none" onClick="cancelEdit();" />
 <p class="error" id="response" />
