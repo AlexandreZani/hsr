@@ -27,7 +27,7 @@ class Checkpoint(object):
     self.login_view = login_view
     self.session_expiration = session_expiration
 
-  def __call__(self, environ, start_response):
+  def __call__(self, pipe, environ, start_response):
     cookies = get_cookie_dict(environ)
 
     try:
@@ -76,4 +76,4 @@ class Checkpoint(object):
     environ['pythia']['jinja_env'].add_context_variables(user=user,
         Permissions=Permissions)
 
-    return environ['pythia']['chain'](environ, start_response)
+    return pipe(environ, start_response)

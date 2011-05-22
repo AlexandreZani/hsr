@@ -56,12 +56,11 @@ class TestCheckpointSessions(object):
     environ = {
         'HTTP_COOKIE' : 'sid=' + s.session_id,
         'pythia' : {
-          'chain' : check_user,
           'jinja_env' : MockJinjaEnv(),
           }
         }
 
-    assert "check_user" == checkpoint(environ, [])
+    assert "check_user" == checkpoint(check_user, environ, [])
 
   def test_no_session(self, engine):
     def login(environ, start_response):
@@ -73,11 +72,10 @@ class TestCheckpointSessions(object):
         'HTTP_COOKIE' : '',
         'pythia' : {
           'jinja_env' : MockJinjaEnv(),
-          'chain' : None
           }
         }
 
-    assert "login" == checkpoint(environ, CustomStartResponse([]))
+    assert "login" == checkpoint(None, environ, CustomStartResponse([]))
 
   def test_invalid_session(self, engine):
     def login(environ, start_response):
@@ -90,11 +88,10 @@ class TestCheckpointSessions(object):
         'HTTP_COOKIE' : 'sid=jhgaskasgd',
         'pythia' : {
           'jinja_env' : MockJinjaEnv(),
-          'chain' : None
           }
         }
 
-    assert "login" == checkpoint(environ, CustomStartResponse([]))
+    assert "login" == checkpoint(None, environ, CustomStartResponse([]))
 
   def test_expired_session(self, engine):
     def login(environ, start_response):
@@ -116,11 +113,10 @@ class TestCheckpointSessions(object):
         'HTTP_COOKIE' : 'sid=' + s.session_id,
         'pythia' : {
           'jinja_env' : MockJinjaEnv(),
-          'chain' : None
           }
         }
 
-    assert "login" == checkpoint(environ, CustomStartResponse([]))
+    assert "login" == checkpoint(None, environ, CustomStartResponse([]))
 
 class TestCheckpointLogin(object):
   def test_valid_user(self, engine):
@@ -149,8 +145,8 @@ class TestCheckpointLogin(object):
         'CONTENT_LENGTH' : len(post_str),
         'pythia' : {
           'jinja_env' : MockJinjaEnv(),
-          'chain' : check_user
           }
         }
 
-    assert "check_user" == checkpoint(environ, CustomStartResponse(check_cookie))
+    assert "check_user" == checkpoint(check_user, environ,
+        CustomStartResponse(check_cookie))

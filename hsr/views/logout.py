@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-def logout(environ, start_response):
+def logout(pipe, environ, start_response):
   environ['hsr']['auth_controller'].delete_session(environ['hsr']['session'].session_id)
   status = "200 OK"
   template = environ['pythia']['jinja_env'].get_template("hsr/logout.html")

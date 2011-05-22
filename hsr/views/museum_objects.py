@@ -15,7 +15,7 @@
 from hsr.model import MuseumObject
 from urlparse import parse_qs
 
-def museum_objects(environ, start_response):
+def museum_objects(pipe, environ, start_response):
   params = parse_qs(environ['QUERY_STRING'])
   
   engine = environ['hsr']['db_engine']

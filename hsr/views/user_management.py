@@ -15,7 +15,7 @@
 from hsr.model import User
 from urlparse import parse_qs
 
-def user_management(environ, start_response):
+def user_management(pipe, environ, start_response):
   auth_controller = environ['hsr']['auth_controller']
 
   users = auth_controller.get_users()

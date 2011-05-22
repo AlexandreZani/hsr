@@ -12,7 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-def static(environ, start_response):
+def static(pipe, environ, start_response):
   status = "200 OK"
 
   path = environ['PATH_INFO']

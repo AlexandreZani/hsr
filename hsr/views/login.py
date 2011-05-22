@@ -14,7 +14,7 @@
 
 from hsr.controller.auth import NoSuchUser, WrongPassword, SessionExpired
 
-def login(environ, start_response):
+def login(pipe, environ, start_response):
   status = "401 Unauthorized"
   template = environ['pythia']['jinja_env'].get_template("hsr/login.html")
 

@@ -14,7 +14,7 @@
 
 from cgi import parse_qs
 
-def delete_user(environ, start_response):
+def delete_user(pipe, environ, start_response):
   auth_controller = environ['hsr']['auth_controller']
 
   try:

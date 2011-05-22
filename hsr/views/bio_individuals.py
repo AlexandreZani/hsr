@@ -15,7 +15,7 @@
 from hsr.model import BioIndividual 
 from urlparse import parse_qs
 
-def bio_individuals(environ, start_response):
+def bio_individuals(pipe, environ, start_response):
   params = parse_qs(environ['QUERY_STRING'])
   
   engine = environ['hsr']['db_engine']

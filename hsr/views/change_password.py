@@ -15,7 +15,7 @@
 from cgi import parse_qs, escape
 from hsr.controller.secure_auth import InsufficientPermissions
 
-def change_password(environ, start_response):
+def change_password(pipe, environ, start_response):
   data_len = int(environ.get('CONTENT_LENGTH', '0'))
 
   data = environ['wsgi.input'].read(data_len)

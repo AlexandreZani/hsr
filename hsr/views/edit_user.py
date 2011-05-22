@@ -17,7 +17,7 @@ from hsr.model import User, Permissions
 from urlparse import parse_qs
 import json
 
-def edit_user(environ, start_response):
+def edit_user(pipe, environ, start_response):
   auth_controller = environ['hsr']['auth_controller']
 
   try:

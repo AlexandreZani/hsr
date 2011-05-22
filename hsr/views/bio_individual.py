@@ -14,7 +14,7 @@
 
 from hsr.model import BioIndividual 
 
-def bio_individual(environ, start_response):
+def bio_individual(pipe, environ, start_response):
   engine = environ['hsr']['db_engine']
   session = engine.get_db_session()
 

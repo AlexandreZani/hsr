@@ -16,7 +16,7 @@ from hsr.model import BioIndividual
 from urlparse import parse_qs
 import json
 
-def edit_bio(environ, start_response):
+def edit_bio(pipe, environ, start_response):
   try:
     data_len = int(environ.get('CONTENT_LENGTH', '0'))
   except ValueError:

@@ -15,7 +15,7 @@
 from cgi import parse_qs
 from hsr.model import BioIndividual
 
-def delete_bio(environ, start_response):
+def delete_bio(pipe, environ, start_response):
   try:
     data_len = int(environ.get('CONTENT_LENGTH', '0'))
   except ValueError:

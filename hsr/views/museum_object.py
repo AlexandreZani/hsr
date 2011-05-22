@@ -14,7 +14,7 @@
 
 from hsr.model import MuseumObject
 
-def museum_object(environ, start_response):
+def museum_object(pipe, environ, start_response):
   engine = environ['hsr']['db_engine']
   session = engine.get_db_session()
 
