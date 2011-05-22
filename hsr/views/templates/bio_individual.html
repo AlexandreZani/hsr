@@ -16,6 +16,10 @@
 
 {% extends "hsr/base.html" %}
 {% block title %}Biological Individual{% endblock %}
+{% block menu %}
+<input type="button" value="New Individual"
+onClick="window.location='/bio_individual/'"/>
+{% endblock %}
 {% block references %}
 <script type="text/javascript" />
   var cur_bio_individual = {
