@@ -18,13 +18,17 @@ def museum_object(environ, start_response):
   engine = environ['hsr']['db_engine']
   session = engine.get_db_session()
 
-  mo_id = environ['pythia']['url_params']['id']
-
-  museum_object = session.query(MuseumObject).filter_by(id=mo_id).first()
+  try:
+    mo_id = environ['pythia']['url_params']['id']
+    museum_object = session.query(MuseumObject).filter_by(id=mo_id).first()
+    new = False
+  except KeyError:
+    museum_object = MuseumObject("", 0, 0)
+    new = True
 
   status = "200 OK"
   template = environ['pythia']['jinja_env'].get_template("hsr/museum_object.html")
-  data = template.render(museum_object=museum_object)
+  data = template.render(museum_object=museum_object, new_museum_object=new)
   response_headers = [
       ('Content-type','text/html'),
       ('Content-Length', str(len(data))),

@@ -16,6 +16,10 @@
 
 {% extends "hsr/base.html" %}
 {% block title %}Museum Object{% endblock %}
+{% block menu %}
+<input type="button" value="New Museum Object"
+onClick="window.location='/museum_object/'"/>
+{% endblock %}
 {% block references %}
 <script type="text/javascript" />
   var cur_museum_object = {
@@ -28,6 +32,11 @@
 <script type="text/javascript" src="/s/js/common.js"></script>
 <script type="text/javascript" src="/s/js/museum_object.js"></script>
 <link rel="stylesheet" type="text/css" href="/s/css/details.css" />
+{% endblock %}
+{% block onload %}
+{%- if new_museum_object -%}
+startNew();
+{%- endif -%}
 {% endblock %}
 {% block content %}
 <table class="details">

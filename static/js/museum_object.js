@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
+function startNew() {
+  startEdit();
+  var enabled = ['catalogue_num_field_td'];
+  var disabled = ['museum_num_static'];
+  setAttributeOfMany(enabled, 'style', '');
+  setAttributeOfMany(disabled, 'style', 'display:none');
+  document.getElementById('cancel_btn').setAttribute(
+      'onClick', 'window.location="/museum_objects/"');
+}
+
 function startEdit() {
-  var enabled = ['object_number_field_tr', 'site_field_td', 'cancel_btn', 'save_btn'];
-  var disabled = ['site_static_td', 'delete_btn', 'edit_btn'];
+  var enabled = ['object_number_field_tr', 'site_field_td',
+      'cancel_btn', 'save_btn'];
+  var disabled = ['site_static_td', 'delete_btn',
+      'edit_btn'];
   setAttributeOfMany(enabled, 'style', '');
   setAttributeOfMany(disabled, 'style', 'display:none');
   document.getElementById('site_id_field').value = window.cur_museum_object.site_id;
@@ -25,7 +37,8 @@ function startEdit() {
 }
 
 function cancelEdit() {
-  var disabled = ['object_number_field_tr', 'site_field_td', 'cancel_btn', 'save_btn'];
+  var disabled = ['catalogue_num_field_td', 'object_number_field_tr',
+      'site_field_td', 'cancel_btn', 'save_btn'];
   var enabled = ['site_static_td', 'delete_btn', 'edit_btn'];
   setAttributeOfMany(enabled, 'style', '');
   setAttributeOfMany(disabled, 'style', 'display:none');

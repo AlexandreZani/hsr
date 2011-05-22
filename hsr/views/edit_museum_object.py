@@ -33,9 +33,12 @@ def edit_museum_object(environ, start_response):
 
   mo = session.query(MuseumObject).filter(
       MuseumObject.catalogue_num==catalogue_num).first()
-
-  mo.object_num = object_num
-  mo.site_id = site_id
+  if mo:
+    mo.object_num = object_num
+    mo.site_id = site_id
+  else:
+    mo = MuseumObject(catalogue_num, object_num, site_id)
+    session.add(mo)
 
   session.commit()
 
