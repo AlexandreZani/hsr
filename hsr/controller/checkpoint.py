@@ -48,13 +48,13 @@ class Checkpoint(object):
     except (NoSuchSession, SessionExpired), e:
       environ['hsr']['auth_except'] = e
       start_response.delete_cookie('sid')
-      return self.login_view(environ, start_response)
+      return self.login_view(None, environ, start_response)
     except KeyError, e:
       environ['hsr']['auth_except'] = e
       try:
         data_len = int(environ.get('CONTENT_LENGTH', '0'))
       except ValueError:
-        return self.login_view(environ, start_response)
+        return self.login_view(None, environ, start_response)
 
       try:
         data = environ['wsgi.input'].read(data_len)
@@ -66,7 +66,7 @@ class Checkpoint(object):
         start_response.add_headers([('Set-Cookie', 'sid=' + session.session_id)])
       except (KeyError, WrongPassword, NoSuchUser), e:
         environ['hsr']['auth_except'] = e
-        return self.login_view(environ, start_response)
+        return self.login_view(None, environ, start_response)
 
     environ['hsr']['user'] = user
     environ['hsr']['session'] = session
