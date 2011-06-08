@@ -18,6 +18,7 @@ from hsr.controller.secure_auth import SecureAuthController
 from hsr.controller.secure_engine import SecureEngine
 import hsr.views.login
 from cgi import parse_qs, escape
+import logging
 
 class Checkpoint(object):
   def __init__(self, engine, login_view=hsr.views.login,
@@ -28,6 +29,7 @@ class Checkpoint(object):
     self.session_expiration = session_expiration
 
   def __call__(self, pipe, environ, start_response):
+    remote_ip = environ.get('REMOTE_ADDR', "Unknown")
     cookies = get_cookie_dict(environ)
 
     try:
@@ -46,6 +48,8 @@ class Checkpoint(object):
           session_expiration=self.session_expiration)
       user = session.user
     except (NoSuchSession, SessionExpired), e:
+      logging.info("%s failed to authenticate using (%s): %s" %
+          (remote_ip, sid, type(e).__name__))
       environ['hsr']['auth_except'] = e
       start_response.delete_cookie('sid')
       return self.login_view(None, environ, start_response)
@@ -54,17 +58,24 @@ class Checkpoint(object):
       try:
         data_len = int(environ.get('CONTENT_LENGTH', '0'))
       except ValueError:
+        logging.info("%s sent a malformed or no login request." % remote_ip)
         return self.login_view(None, environ, start_response)
 
       try:
+        username = None
         data = environ['wsgi.input'].read(data_len)
         data_dict = parse_qs(data)
+        username = data_dict['username'][0]
+        password = data_dict['password'][0]
         session = self.auth_controller.create_session(
-            data_dict['username'][0], data_dict['password'][0])
+            username, password)
         user = session.user
         environ['hsr']['auth_except'] = None
         start_response.add_headers([('Set-Cookie', 'sid=' + session.session_id)])
+        logging.info("%s logged in as %s" % (remote_ip, username))
       except (KeyError, WrongPassword, NoSuchUser), e:
+        logging.info("%s Failed login attempt for %s: %s" %
+            (remote_ip, username, type(e).__name__))
         environ['hsr']['auth_except'] = e
         return self.login_view(None, environ, start_response)
 

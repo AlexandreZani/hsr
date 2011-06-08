@@ -12,8 +12,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import logging
+
 def logout(pipe, environ, start_response):
-  environ['hsr']['auth_controller'].delete_session(environ['hsr']['session'].session_id)
+  session = environ['hsr']['session']
+  logging.info("%s logged out from %s : %s" %
+      (environ.get('REMOTE_ADDR', "Unknown"),
+      session.user.username,
+      session.session_id))
+  environ['hsr']['auth_controller'].delete_session(session.session_id)
   status = "200 OK"
   template = environ['pythia']['jinja_env'].get_template("hsr/logout.html")
   data = template.render()
