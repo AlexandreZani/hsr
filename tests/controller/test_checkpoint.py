@@ -63,7 +63,7 @@ class TestCheckpointSessions(object):
     assert "check_user" == checkpoint(check_user, environ, [])
 
   def test_no_session(self, engine):
-    def login(environ, start_response):
+    def login(pipe, environ, start_response):
       assert None == environ['hsr']['user']
       return "login"
     checkpoint = Checkpoint(engine, login)
@@ -78,7 +78,7 @@ class TestCheckpointSessions(object):
     assert "login" == checkpoint(None, environ, CustomStartResponse([]))
 
   def test_invalid_session(self, engine):
-    def login(environ, start_response):
+    def login(pipe, environ, start_response):
       assert None == environ['hsr']['user']
       assert NoSuchSession == type(environ['hsr']['auth_except'])
       return "login"
@@ -94,7 +94,7 @@ class TestCheckpointSessions(object):
     assert "login" == checkpoint(None, environ, CustomStartResponse([]))
 
   def test_expired_session(self, engine):
-    def login(environ, start_response):
+    def login(pipe, environ, start_response):
       assert None == environ['hsr']['user']
       assert SessionExpired == type(environ['hsr']['auth_except'])
       return "login"
