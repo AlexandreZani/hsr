@@ -17,5 +17,7 @@ templates = "views/templates"
 app_name = "Human Skeletal Remains Database"
 
 db_url = 'sqlite:////home/alexandre/prog/hsr2/test_db.db'
+log_file = "./tmp/hsr.log"
+log_level = "DEBUG"
 
 session_expiration=60*60*24
