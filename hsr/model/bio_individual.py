@@ -40,7 +40,7 @@ class BioIndividual(Base):
 
   @property
   def sex_str(self):
-    return Sex.STRINGS[self.sex]
+    return Sex.STRINGS.get(self.sex, Sex.NA)
 
   def __init__(self, suffix_designation, suffix, sex, age, age_max, age_min,
       catalogue_num):
