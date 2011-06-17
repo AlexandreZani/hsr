@@ -26,7 +26,11 @@ onClick="window.location='/museum_object/'"/>
     'catalogue_num' : '{{ museum_object.catalogue_num }}',
     'object_num' : '{{ museum_object.object_num }}',
     'site_id' : '{{ museum_object.site_id}}',
+    {%- if museum_object.site -%}
     'site_name' : '{{ museum_object.site.name}}',
+    {%- else -%}
+    'site_name' : '',
+    {%- endif -%}
   }
 </script>
 <script type="text/javascript" src="/s/js/common.js"></script>
