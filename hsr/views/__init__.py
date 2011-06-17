@@ -12,3 +12,6 @@ from hsr.views.delete_user import delete_user
 from hsr.views.edit_bio import edit_bio
 from hsr.views.edit_museum_object import edit_museum_object
 from hsr.views.delete_bio import delete_bio
+from hsr.views.sites import sites
+from hsr.views.site import site
+from hsr.views.edit_site import edit_site

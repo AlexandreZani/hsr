@@ -24,7 +24,7 @@ class MuseumObject(Base):
   catalogue_num = Column(String, unique=True)
   object_num = Column(Integer)
   site_id = Column(Integer, ForeignKey('sites.id'))
-  site = relationship(Site, backref=backref('users', order_by=catalogue_num))
+  site = relationship(Site, backref=backref('museum_objects', order_by=catalogue_num))
 
   def __init__(self, catalogue_num, object_num, site_id):
     self.catalogue_num = catalogue_num

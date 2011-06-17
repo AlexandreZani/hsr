@@ -31,4 +31,8 @@ view_paths = [
     ("/edit_bio/", hsr.views.edit_bio, ()),
     ("/edit_museum_object/", hsr.views.edit_museum_object, ()),
     ("/delete_bio/", hsr.views.delete_bio, ()),
+    ("/sites/", hsr.views.sites, ()),
+    ("/site/(\d+)/", hsr.views.site, ("id",)),
+    ("/site/", hsr.views.site, ()),
+    ("/edit_site/", hsr.views.edit_site, ()),
 ]

@@ -17,58 +17,48 @@
 {% extends "hsr/base.html" %}
 {% block title %}Museum Object{% endblock %}
 {% block menu %}
-<input type="button" value="New Museum Object"
-onClick="window.location='/museum_object/'"/>
+<input type="button" value="New Site"
+onClick="window.location='/site/'"/>
 {% endblock %}
 {% block references %}
 <script type="text/javascript" />
-  var cur_museum_object = {
-    'catalogue_num' : '{{ museum_object.catalogue_num }}',
-    'object_num' : '{{ museum_object.object_num }}',
-    'site_id' : '{{ museum_object.site_id}}',
-    {%- if museum_object.site -%}
-    'site_name' : '{{ museum_object.site.name}}',
-    {%- else -%}
-    'site_name' : '',
-    {%- endif -%}
+  var cur_site = {
+    'id' : '{{ site.id}}',
+    'name' : '{{ site.name}}',
   }
 </script>
 <script type="text/javascript" src="/s/js/common.js"></script>
-<script type="text/javascript" src="/s/js/museum_object.js"></script>
+<script type="text/javascript" src="/s/js/site.js"></script>
 <link rel="stylesheet" type="text/css" href="/s/css/details.css" />
 {% endblock %}
 {% block onload %}
-{%- if new_museum_object -%}
+{%- if new_site -%}
 startNew();
 {%- endif -%}
 {% endblock %}
 {% block content %}
 <table class="details">
   <tr>
-    <th>Museum Number:</th>
-    <td id="museum_num_static">{{ museum_object.catalogue_num }}</td>
-    <td style="display:none" id="catalogue_num_field_td">
-      <input id="catalogue_num_field" type="text" />
-    </td>
-  </tr>
-  <tr onClick="window.location='/site/{{ museum_object.site_id }}';">
-    <th>Site:</th>
-    <td id="site_static_td">{{ museum_object.site.name }}</td>
-    <td style="display:none" id="site_field_td">
+    <th>Site ID:</th>
+    <td id="site_id_static_td">{{ site.id }}</td>
+    <td style="display:none" id="site_id_field_td">
       <input id="site_id_field" type="text" />
     </td>
   </tr>
-  <tr style="display:none" id="object_number_field_tr">
-    <th>Object Number:</th>
-    <td><input id="object_number_field" type="text" /></td>
+  <tr>
+    <th>Site Name:</th>
+    <td id="site_name_static_td">{{ site.name }}</td>
+    <td style="display:none" id="site_name_field_td">
+      <input id="site_name_field" type="text" />
+    </td>
   </tr>
   <tr>
-    <th>Biological Individuals:</th>
+    <th>Museum Objects:</th>
     <td>
       <table class="inner_table">
-      {% for bio_individual in museum_object.bio_individuals %}
-        <tr onClick="window.location='/bio_individual/{{ bio_individual.id }}';">
-          <td>{{ bio_individual.suffix_designation }}</td>
+      {% for museum_object in site.museum_objects %}
+        <tr onClick="window.location='/museum_object/{{ museum_object.id }}';">
+          <td>{{ museum_object.catalogue_num }}</td>
         </tr>
       {% endfor %}
       </table>
@@ -78,8 +68,8 @@ startNew();
 {%- if user.permissions <= Permissions.WRITE -%}
 <input type="button" value="Edit" id="edit_btn" onClick="startEdit();" />
 <input type="button" value="Save" id="save_btn" style="display:none"
-onClick="saveMuseumObject();" />
-<input type="button" value="Delete" id="delete_btn" onClick="deleteBio();" />
+onClick="saveSite();" />
+<input type="button" value="Delete" id="delete_btn" onClick="deleteSite();" />
 <input type="button" value="Cancel" id="cancel_btn" style="display:none" onClick="cancelEdit();" />
 <p class="error" id="response" />
 {% endif %}

@@ -27,3 +27,9 @@ class Site(Base):
 
   def __repr__(self):
     return "<Site (%i, %s)>" % (self.id, self.name)
+
+  def to_dict(self):
+    return {
+        'id': self.id,
+        'name': self.name,
+        }
