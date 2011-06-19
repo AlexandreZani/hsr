@@ -35,4 +35,6 @@ view_paths = [
     ("/site/(\d+)/", hsr.views.site, ("id",)),
     ("/site/", hsr.views.site, ()),
     ("/edit_site/", hsr.views.edit_site, ()),
+    ("/delete_museum_object/", hsr.views.delete_museum_object, ()),
+    ("/delete_site/", hsr.views.delete_site, ()),
 ]

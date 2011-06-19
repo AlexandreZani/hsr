@@ -79,3 +79,29 @@ function saveMuseumObjectCallback() {
     }
   }
 }
+
+function deleteMuseumObject() {
+  var sure = confirm("You are about to permanently delete this musem object from the database. This operation may not be undone. Are you sure you want to continue?");
+  if (! sure) {
+    return;
+  }
+
+  request = getXMLHttpRequest();
+  request.onreadystatechange = deleteMuseumObjectCallback;
+
+  request.open("POST", "/delete_museum_object", true);
+  request.send("id=" + escape(window.cur_museum_object.id));
+}
+
+function deleteMuseumObjectCallback() {
+  if (this.readyState == 4) {
+    if (this.status == 200) {
+      alert("Success");
+      history.back();
+    } else {
+      var response_element = document.getElementById("response");
+      response_element.innerHTML = this.statusText;
+      response_element.setAttribute("class", "error");
+    }
+  }
+}

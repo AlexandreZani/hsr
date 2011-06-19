@@ -41,6 +41,7 @@ class MuseumObject(Base):
       site_name = ''
 
     return {
+        'id': self.id,
         'catalogue_num' : self.catalogue_num,
         'object_num' : self.object_num,
         'site_id' : self.site_id,
