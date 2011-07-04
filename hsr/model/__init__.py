@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 from hsr.model.museum_object import MuseumObject
-from hsr.model.bio_individual import BioIndividual
+from hsr.model.bio_individual import BioIndividual, Sex
 from hsr.model.site import Site
 from hsr.model.session import Session
 from hsr.model.user import User, Permissions
