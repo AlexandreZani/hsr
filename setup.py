@@ -18,7 +18,7 @@ from distutils.core import setup
 from glob import glob
 
 setup(name = 'hsr',
-    version = '0.5',
+    version = '0.6',
     author = 'Alexandre Zani',
     author_email = 'Alexandre.Zani@gmail.com',
     description = ('Human Skeletal Remains'),
