@@ -14,13 +14,29 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from setuptools import setup
+from distutils.core import setup
+from glob import glob
+
 setup(name = 'hsr',
-    version = '0.2',
+    version = '0.5',
     author = 'Alexandre Zani',
     author_email = 'Alexandre.Zani@gmail.com',
     description = ('Human Skeletal Remains'),
     license = 'Apache License Version 2.0',
-    packages = ['hsr', 'tests'],
-    install_requires = ['sqlalchemy', 'pythia']
+    url = 'https://github.com/AlexandreZani/hsr',
+    packages = [
+      'hsr',
+      'hsr.controller',
+      'hsr.model',
+      'hsr.views',
+      'hsr.views.templates',
+      ],
+    package_data = {
+      'hsr.views.templates': ['*.html']
+      },
+    requires = ['sqlalchemy', 'paste', 'pythia'],
+    data_files = [
+      ('static/css', glob('static/css/*.css')),
+      ('static/js', glob('static/js/*.js')),
+      ],
     )
